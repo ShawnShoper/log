@@ -1,21 +1,16 @@
 package com.daqsoft.log.util;
 
-import com.daqsoft.commons.core.DateUtil;
-import com.daqsoft.log.util.Appender.Appender;
 import com.daqsoft.log.util.annotation.LogModel;
+import com.daqsoft.log.util.appender.Appender;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.constans.Constans;
 import com.daqsoft.log.util.queue.LogQueue;
-import org.fusesource.jansi.Ansi;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.*;
-
-import static org.fusesource.jansi.Ansi.ansi;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by ShawnShoper on 2017/4/18.
@@ -23,36 +18,36 @@ import static org.fusesource.jansi.Ansi.ansi;
  */
 public class LogProcessor {
     private static int pid = Integer.valueOf(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
-    private static OutputStream print = System.out;
     List<Appender> appenders = new ArrayList<>();
 
-    static {
+    public LogProcessor(Appender... appenders) {
+        Arrays.stream(appenders).forEach(this.appenders::add);
         new LogConsume().start();
     }
+
 
     /**
      * 开启死循环一直监控日志队列
      */
-    private static class LogConsume extends Thread {
+    class LogConsume extends Thread {
         public LogConsume() {
             this.setName("log-consume");
-            this.setDaemon(false);
+            this.setDaemon(true);
         }
 
         @Override
         public void run() {
             for (; !Thread.currentThread().isInterrupted(); ) {
                 try {
-                    Map<String, Object> poll = LogQueue.logQueue.poll(10, TimeUnit.SECONDS);
-
-                    if (Objects.nonNull(poll)) {
-                        try {
-                            print.flush();
-                            print.write(String.valueOf(poll.get("logmsg")).getBytes());
-                            print.write("\r\n".getBytes());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    Log log = LogQueue.logQueue.poll(1, TimeUnit.SECONDS);
+                    if (Objects.nonNull(log)) {
+                        appenders.stream().forEach(e->{
+                            try {
+                                e.write(log);
+                            } catch (IOException excep) {
+                                excep.printStackTrace();
+                            }
+                        });
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -89,18 +84,16 @@ public class LogProcessor {
             log.setTime(System.currentTimeMillis());
             log.setContentType(Constans.TYPE_STRING);
             log.setApplication(logConfig.getApplication());
+            log.setLineNumber(lastCall.getLineNumber());
+            log.setMethodName(methodName);
+            log.setClassName(className);
+            log.setPid(pid);
             Business business = new Business();
             business.setModel(model);
             business.setContent(logMsg);
             business.setLevel(logLevel);
             log.setBusiness(business);
-            String time = DateUtil.dateToString("yyyy-MM-dd HH:mm:ss.sss", new Date());
-            int lineNumber = lastCall.getLineNumber();
-            String logstr = String.format("%-23s  %-5s% 6d --- [%30s]:%-5d %s %s", ansi().eraseScreen().fg(Ansi.Color.MAGENTA).a(time).reset().toString(), logLevel, pid, ansi().eraseScreen().fg(Ansi.Color.MAGENTA).a(methodName).reset().toString(), lineNumber, ansi().eraseScreen().fg(Ansi.Color.MAGENTA).a(className).reset().toString(), logMsg);
-            Map<String, Object> map = new HashMap<>();
-            map.put("logmsg", logstr);
-            map.put("log", log);
-            LogQueue.logQueue.offer(map);
+            LogQueue.logQueue.offer(log);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -130,9 +123,5 @@ public class LogProcessor {
         Optional<StackTraceElement> first = Arrays.stream(Thread.currentThread().getStackTrace()).filter(e -> e.getClassName().equals(clazz.getName())
         ).findFirst();
         return first.isPresent() ? first.get() : null;
-    }
-
-    public LogProcessor(Appender... appenders) {
-        Arrays.stream(appenders).forEach(this.appenders::add);
     }
 }

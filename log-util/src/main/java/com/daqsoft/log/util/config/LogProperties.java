@@ -10,14 +10,22 @@ public class LogProperties {
     private String host;
     private int port;
     private String application;
-    private String logDir;
-
-    public String getLogDir() {
-        return logDir;
+    private FileProperties fileProperties;
+    private String partten;
+    public FileProperties getFileProperties() {
+        return fileProperties;
     }
 
-    public void setLogDir(String logDir) {
-        this.logDir = logDir;
+    public String getPartten() {
+        return partten;
+    }
+
+    public void setPartten(String partten) {
+        this.partten = partten;
+    }
+
+    public void setFileProperties(FileProperties fileProperties) {
+        this.fileProperties = fileProperties;
     }
 
     public Target getTarget() {

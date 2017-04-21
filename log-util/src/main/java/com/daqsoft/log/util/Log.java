@@ -19,11 +19,22 @@ public class Log {
     private String contentType = Constans.TYPE_STRING;
     //来源地址 HOST:PORT
     private String source;
-
+    private int pid;
+    private String className;
+    private String methodName;
+    private int lineNumber;
     private Business business;
 
     public Business getBusiness() {
         return business;
+    }
+
+    public int getPid() {
+        return pid;
+    }
+
+    public void setPid(int pid) {
+        this.pid = pid;
     }
 
     public void setBusiness(Business business) {
@@ -55,6 +66,29 @@ public class Log {
         this.time = time;
     }
 
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
 
     public String getContentType() {
         return contentType;

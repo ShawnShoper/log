@@ -4,15 +4,12 @@ import com.daqsoft.commons.core.DateUtil;
 import com.daqsoft.commons.core.StringUtil;
 import com.daqsoft.log.util.Log;
 import com.daqsoft.log.util.config.LogProperties;
-import org.fusesource.jansi.Ansi;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.fusesource.jansi.Ansi.ansi;
 
 /**
  * Created by ShawnShoper on 2017/4/19.
@@ -57,11 +54,7 @@ public class ConsoleAppender extends Appender {
             } else {
                 return null;
             }
-        }).forEach(e -> {
-            System.out.println(e);
-            System.out.println(logPatterns);
-            logPatterns.add(e);
-        });
+        }).forEach(logPatterns::add);
     }
 
     /**
@@ -78,45 +71,56 @@ public class ConsoleAppender extends Appender {
                 logPatterns.stream().forEach(e -> {
                     String name = e.getName();
                     String tmp = "";
+                    Tag tag = null;
                     if (Tag.T.name.equals(name)) {
+                        tag = Tag.T;
                         String time = DateUtil.dateToString(e.getPattern(), new Date(log.getTime()));
                         tmp = time;
                     } else if (Tag.C.name.equals(name)) {
+                        tag = Tag.C;
                         tmp = log.getBusiness().getContent();
                     } else if (Tag.L.name.equals(name)) {
+                        tag = Tag.L;
                         tmp = log.getBusiness().getLevel();
                     } else if (Tag.P.name.equals(name)) {
+                        tag = Tag.P;
                         tmp = String.valueOf(log.getPid());
                     } else if (Tag.MN.name.equals(name)) {
+                        tag = Tag.MN;
                         tmp = "[" + String.valueOf(log.getMethodName()) + "]";
                     } else if (Tag.LN.name.equals(name)) {
+                        tag = Tag.LN;
                         tmp = "-" + String.valueOf(log.getLineNumber());
                     } else if (Tag.CN.name.equals(name)) {
+                        tag = Tag.CN;
                         tmp = String.valueOf(log.getClassName());
                     }
-                    System.out.println("%" + (' ' == e.getNeg() ? "" : e.getNeg()) + e.getOffset() + "s");
+                    if (e.getOffset() < 0 && Math.abs(tag.getOffset()) < tmp.length()) {
+                        tmp = tmp.substring(0, tmp.length() + Math.abs(tag.getOffset()) - tmp.length());
+                    }
+//                    System.out.println("%" + (' ' == e.getNeg() ? "" : e.getNeg()) + e.getOffset() + "s");
                     tmp = String.format("%" + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset()) + "s", tmp);
+                    tmp+=" ";
+                    System.out.println(tmp);
                     logMsg.append(tmp);
                 });
-            System.out.println(logMsg.toString());
-            String time = DateUtil.dateToString("yyyy-MM-dd HH:mm:ss.sss", new Date(log.getTime()));
-            String logstr = String.format("%-23s%-5s%6d%30s%-5d %s %s", ansi().eraseScreen().fg(Ansi.Color.MAGENTA).a(time).reset().toString(), log.getBusiness().getLevel(), log.getPid(), ansi().eraseScreen().fg(Ansi.Color.MAGENTA).a(log.getMethodName()).reset().toString(), log.getLineNumber(), ansi().eraseScreen().fg(Ansi.Color.MAGENTA).a(log.getClassName()).reset().toString(), log.getBusiness().getContent());
+//            System.out.println(logMsg.toString());
+//            String time = DateUtil.dateToString("yyyy-MM-dd HH:mm:ss.sss", new Date(log.getTime()));
+//            String logstr = String.format("%-23s%-5s%6d%30s%-5d %s %s", ansi().eraseScreen().fg(Ansi.Color.MAGENTA).a(time).reset().toString(), log.getBusiness().getLevel(), log.getPid(), ansi().eraseScreen().fg(Ansi.Color.MAGENTA).a(log.getMethodName()).reset().toString(), log.getLineNumber(), ansi().eraseScreen().fg(Ansi.Color.MAGENTA).a(log.getClassName()).reset().toString(), log.getBusiness().getContent());
 //            String logstr = String.format("%-23s%-5s%6d%30s%-5d%s%s",time, log.getBusiness().getLevel(), log.getPid(), log.getMethodName(), log.getLineNumber(), log.getClassName(), log.getBusiness().getContent());
 //            %-23s%-5s%6d%30s%-5d %s %s
             print.flush();
-            print.write(logstr.getBytes());
+            print.write(logMsg.toString().getBytes());
             print.write("\r\n".getBytes());
+            System.out.println(String.format("2017-04-24 17:37:30.030  INFO %-5s", "13400"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(String.format("%2s", String.valueOf(3)));
-    }
 
     enum Tag {
-        T("t", 23), L("l", 5), P("p", 6), MN("mn", 30), LN("ln", -5), CN("cn", 30), C("c", -1);
+        T("t", 23), L("l", 5), P("p", -5), MN("mn", 30), LN("ln", -5), CN("cn", 30), C("c", 0);
 
         Tag(String name, int offset) {
             this.name = name;

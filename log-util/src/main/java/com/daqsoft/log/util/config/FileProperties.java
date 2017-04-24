@@ -4,7 +4,7 @@ package com.daqsoft.log.util.config;
  * Created by ShawnShoper on 2017/4/21.
  */
 public class FileProperties {
-    enum Rolling {
+    public enum Rolling {
         Hour, Day, Month, Year;
     }
 

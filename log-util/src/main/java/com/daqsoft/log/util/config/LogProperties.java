@@ -5,6 +5,7 @@ import com.daqsoft.log.util.constans.Target;
 /**
  * Created by ShawnShoper on 2016/12/19 0019.
  */
+
 public class LogProperties {
     private Target target;
     private String host;

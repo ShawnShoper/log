@@ -56,7 +56,6 @@ public class LogProcessor {
         }
     }
 
-
     public void processor(final String logMsg, String logLevel, final Class<?> clazz) {
         StackTraceElement lastCall = getLastInvokStack(clazz);
         assembly(logMsg, logLevel, clazz, lastCall);
@@ -78,7 +77,7 @@ public class LogProcessor {
                 if (Objects.nonNull(classLogModel))
                     model = classLogModel.value();
             }
-            LogProperties logConfig = LogFactory.getLogConfig();
+            LogProperties logConfig = LogFactory.getLogProperties();
             Log log = new Log();
             log.setSource(logConfig.getHost() + ":" + logConfig.getPort());
             log.setTime(System.currentTimeMillis());

@@ -20,8 +20,8 @@ public class LogProcessor {
     private static int pid = Integer.valueOf(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
     List<Appender> appenders = new ArrayList<>();
 
-    public LogProcessor(Appender... appenders) {
-        Arrays.stream(appenders).forEach(this.appenders::add);
+    public LogProcessor(List<Appender> appenders) {
+        this.appenders = appenders;
         new LogConsume().start();
     }
 
@@ -79,7 +79,6 @@ public class LogProcessor {
             }
             LogProperties logConfig = LogFactory.getLogProperties();
             Log log = new Log();
-            log.setSource(logConfig.getHost() + ":" + logConfig.getPort());
             log.setTime(System.currentTimeMillis());
             log.setContentType(Constans.TYPE_STRING);
             log.setApplication(logConfig.getApplication());
@@ -119,8 +118,7 @@ public class LogProcessor {
 //            }
 //        }
         //采用最简单的stream API来做,避免太多繁琐的代码
-        Optional<StackTraceElement> first = Arrays.stream(Thread.currentThread().getStackTrace()).filter(e -> e.getClassName().equals(clazz.getName())
-        ).findFirst();
+        Optional<StackTraceElement> first = Arrays.stream(Thread.currentThread().getStackTrace()).filter(e -> e.getClassName().equals(clazz.getName())).findFirst();
         return first.isPresent() ? first.get() : null;
     }
 }

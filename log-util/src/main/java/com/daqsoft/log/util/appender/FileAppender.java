@@ -13,7 +13,6 @@ import java.io.IOException;
  */
 public class FileAppender extends Appender {
     FileProperties fileProperties;
-
     public FileAppender(LogProperties logProperties) {
         super(logProperties);
     }
@@ -21,6 +20,10 @@ public class FileAppender extends Appender {
     @Override
     public void init() {
         this.fileProperties = logProperties.getFileProperties();
+        String fileDir = this.fileProperties.getFileDir();
+        File file = new File(fileDir);
+        if(!file.exists())file.mkdirs();
+
     }
 
     @Override

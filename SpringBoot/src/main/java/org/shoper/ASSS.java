@@ -1,4 +1,4 @@
-package org.shoper.aassssssssssssssss.asdasdsaaaaasdas;
+package org.shoper;
 
 import com.daqsoft.log.util.LogFactory;
 import org.slf4j.Logger;
@@ -12,11 +12,15 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class ASSS {
-    com.daqsoft.log.util.Logger logger = LogFactory.getLogger(AnnotationConfigApplicationContextAnnotationConfigApplicationContext.class);
+    com.daqsoft.log.util.Logger logger = LogFactory.getLogger(ASSS.class);
     Logger logger1 = LoggerFactory.getLogger(ASSS.class);
     @PostConstruct
-    public void ss() {
-        logger.info("sss");
+    public void ss() throws InterruptedException {
+        new Thread(()-> logger.debug("123123")).start();
+        logger.info("撒旦");
+        logger.debug("撒旦");
+        logger.warn("撒旦");
+        logger.error("撒旦");
         logger1.warn("warn");
         logger1.debug("debug");
         logger1.error("error");

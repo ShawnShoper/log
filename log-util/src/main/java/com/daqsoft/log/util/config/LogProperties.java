@@ -7,7 +7,7 @@ import com.daqsoft.log.util.constans.Target;
  */
 
 public class LogProperties {
-    private Target target;
+    private Target[] targets;
     private String host;
     private int port;
     private String application;
@@ -29,12 +29,12 @@ public class LogProperties {
         this.fileProperties = fileProperties;
     }
 
-    public Target getTarget() {
-        return target;
+    public Target[] getTargets() {
+        return targets;
     }
 
-    public void setTarget(Target target) {
-        this.target = target;
+    public void setTargets(Target[] targets) {
+        this.targets = targets;
     }
 
     public String getHost() {

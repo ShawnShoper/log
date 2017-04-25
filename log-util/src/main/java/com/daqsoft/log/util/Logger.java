@@ -2,11 +2,8 @@ package com.daqsoft.log.util;
 
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.constans.Constans;
-import org.fusesource.jansi.Ansi;
 
 import javax.annotation.PreDestroy;
-
-import static org.fusesource.jansi.Ansi.ansi;
 
 public class Logger {
     private Class<?> clazz;
@@ -55,7 +52,7 @@ public class Logger {
     }
 
     public void error(String logMsg) {
-        log(ansi().eraseScreen().fg(Ansi.Color.RED).a(logMsg).reset().toString(), Constans.ERROR);
+        log(logMsg, Constans.ERROR);
     }
 
     public void error(String formatter, Object... obj) {

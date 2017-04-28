@@ -1,17 +1,19 @@
 package com.daqsoft.log.util;
 
 
-import com.daqsoft.log.util.appender.Appender;
-import com.daqsoft.log.util.appender.ConsoleAppender;
-import com.daqsoft.log.util.appender.FileAppender;
+import com.daqsoft.commons.core.StringUtil;
+import com.daqsoft.log.util.appender.*;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.constans.Target;
 import org.ho.yaml.Yaml;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by ShawnShoper on 2017/4/17.
@@ -21,12 +23,13 @@ public class LogFactory {
     //日志配置
     private static LogProperties logProperties;
     private static LogProcessor logProcessor;
-
+    public final static String PERCENT = "%";
     public static LogProperties getLogProperties() {
         return logProperties;
     }
 
     private static void init() {
+
         try {
             logProperties = Yaml.loadType(LogProperties.class.getResourceAsStream("/log.yml"), LogProperties.class);
         } catch (FileNotFoundException e) {
@@ -38,12 +41,42 @@ public class LogFactory {
             logProperties.setPort(logProperties.getPort());
             logProperties.setPartten("%-23{yyyy-MM-dd HH:mm:ss.sss}t%-5l%6p%30mn%-5ln%cn%c");
         }
+        List<LogPattern> logPatterns = new ArrayList<>();
+        String partten = logProperties.getPartten();
+        String[] log_partten = partten.split(PERCENT);
+        Pattern reg_pattern = Pattern.compile("(-)?(\\d*?)(\\{.*?\\})?([a-z]+)", Pattern.CASE_INSENSITIVE);
+        //遍历pattern
+        Arrays.stream(log_partten).map(String::trim).filter(StringUtil::nonEmpty).map(e -> {
+            Matcher matcher = reg_pattern.matcher(e);
+            if (matcher.find()) {
+                String neg = matcher.group(1);
+                if (Objects.nonNull(neg) && !"-".equals(neg))
+                    throw new RuntimeException(String.format("Log express neg %s not support", neg));
+                String offset = matcher.group(2);
+                String pattern = matcher.group(3);
+                if (Objects.nonNull(pattern)) {
+                    pattern = pattern.substring(1, pattern.length() - 1);
+                }
+                String name = matcher.group(4);
+                if (Objects.isNull(name))
+                    throw new RuntimeException(String.format("Log express tag %s not support", name));
+                Tag tag;
+                try {
+                    tag = Tag.valueOf(name.toUpperCase());
+                } catch (IllegalArgumentException e1) {
+                    throw new RuntimeException(String.format("Log express tag %s not support", name));
+                }
+                return new LogPattern(tag.getName(), offset.isEmpty() ? 0 : Integer.valueOf(offset), pattern, (Objects.isNull(neg) ? ' ' : '-'));
+            } else {
+                return null;
+            }
+        }).forEach(logPatterns::add);
         List<Appender> appenders = new ArrayList<>(logProperties.getTargets().length);
         for (Target target : logProperties.getTargets()) {
             if (target == Target.File)
-                appenders.add(new FileAppender(logProperties));
+                appenders.add(new FileAppender(logProperties,logPatterns));
             else if (target == Target.Sout)
-                appenders.add(new ConsoleAppender(logProperties));
+                appenders.add(new ConsoleAppender(logProperties,logPatterns));
             else {
                 throw new RuntimeException("Target " + target + " not support yet");
             }

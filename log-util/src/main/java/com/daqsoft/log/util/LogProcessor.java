@@ -2,6 +2,7 @@ package com.daqsoft.log.util;
 
 import com.daqsoft.log.util.annotation.LogModel;
 import com.daqsoft.log.util.appender.Appender;
+import com.daqsoft.log.util.appender.LogPattern;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.constans.Constans;
 import com.daqsoft.log.util.queue.LogQueue;

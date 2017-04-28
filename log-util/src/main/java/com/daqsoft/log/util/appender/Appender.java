@@ -10,7 +10,6 @@ import java.io.IOException;
  */
 public abstract class Appender {
     LogProperties logProperties;
-
     public abstract void init();
 
     public Appender(LogProperties logProperties) {

@@ -6,7 +6,7 @@ port: 2222
 application:  "springboot application"
 fileProperties:
   fileDir:  D:/test/
-  fileName: log
+  fileName: log.log
   rolling:  Hour
-  fileSize: 254MB
+  fileSize: 10KB
 partten:  "%-23{yyyy-MM-dd HH:mm:ss.sss}t %5l %-5p --- [%15mn] %-41cn : %c"

@@ -24,6 +24,7 @@ public class LogFactory {
     private static LogProperties logProperties;
     private static LogProcessor logProcessor;
     public final static String PERCENT = "%";
+
     public static LogProperties getLogProperties() {
         return logProperties;
     }
@@ -74,15 +75,18 @@ public class LogFactory {
         List<Appender> appenders = new ArrayList<>(logProperties.getTargets().length);
         for (Target target : logProperties.getTargets()) {
             if (target == Target.File)
-                appenders.add(new FileAppender(logProperties,logPatterns));
+                appenders.add(new FileAppender(logProperties, logPatterns));
             else if (target == Target.Sout)
-                appenders.add(new ConsoleAppender(logProperties,logPatterns));
-            else {
+                appenders.add(new ConsoleAppender(logProperties, logPatterns));
+            else
                 throw new RuntimeException("Target " + target + " not support yet");
-            }
+
         }
         logProcessor = new LogProcessor(appenders);
-
+        //registry hock
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            appenders.forEach(Appender::destroy);
+        }));
     }
 
     public static void setLogConfig(LogProperties logProperties) {

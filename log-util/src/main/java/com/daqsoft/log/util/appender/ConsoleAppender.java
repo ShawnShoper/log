@@ -21,10 +21,11 @@ public class ConsoleAppender extends Appender {
     List<LogPattern> logPatterns;
     public final static String PERCENT = "%";
 
-    public ConsoleAppender(LogProperties logProperties,List<LogPattern> logPatterns) {
+    public ConsoleAppender(LogProperties logProperties, List<LogPattern> logPatterns) {
         super(logProperties);
         this.logPatterns = logPatterns;
     }
+
     @Override
     public void init() {
 //        logPatterns = new ArrayList<>();
@@ -106,7 +107,7 @@ public class ConsoleAppender extends Appender {
                     tmp = String.format("%" + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset()) + "s", tmp);
                 } else if (Tag.P.name.equals(name)) {
                     tmp = String.valueOf(log.getPid());
-                    tmp = String.format("%" + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset()+11) + "s", ansi().eraseScreen().fg(Ansi.Color.MAGENTA).a(tmp).reset().toString());
+                    tmp = String.format("%" + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset() + 11) + "s", ansi().eraseScreen().fg(Ansi.Color.MAGENTA).a(tmp).reset().toString());
                 } else if (Tag.MN.name.equals(name)) {
                     tmp = String.valueOf(log.getMethodName());
                     tmp = String.format("%" + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset()) + "s", tmp);
@@ -123,7 +124,7 @@ public class ConsoleAppender extends Appender {
                         tmp = stringBuilder.toString() + split[split.length - 1];
 //                        tmp = tmp.substring(0, tmp.length() + Math.abs(tag.getOffset()) - tmp.length());
                     }
-                    tmp = String.format("%" + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset()+11) + "s", ansi().eraseScreen().fg(Ansi.Color.CYAN).a(tmp).reset().toString());
+                    tmp = String.format("%" + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset() + 11) + "s", ansi().eraseScreen().fg(Ansi.Color.CYAN).a(tmp).reset().toString());
                 }
 
 
@@ -143,6 +144,12 @@ public class ConsoleAppender extends Appender {
         print.write(out.getBytes());
         print.write("\r\n".getBytes());
         print.flush();
+    }
+
+    @Override
+    public void destroy() {
+        if (Objects.isNull(print))
+            print.close();
     }
 
 
@@ -206,8 +213,6 @@ public class ConsoleAppender extends Appender {
 //            e.printStackTrace();
 //        }
 //    }
-
-
 
 
 }

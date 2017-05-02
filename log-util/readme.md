@@ -2,6 +2,8 @@
 ----
 使用说明
 在项目资源文件夹添加log.yml文件
+
+
 ```+yaml
 targets:
   - File
@@ -15,4 +17,13 @@ fileProperties:
   rolling:  Hour
   fileSize: 1MB
 partten:  "%-23{yyyy-MM-dd HH:mm:ss.sss}t %5l %-5p --- [%15mn:%ln] %-41cn: %c"
+```
+
+pom.xml添加
+```+xml
+<dependency>
+  <groupId>com.daqsoft.log</groupId>
+  <artifactId>log-util</artifactId>
+  <version>0.0.1</version>
+</dependency>
 ```

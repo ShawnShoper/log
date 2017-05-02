@@ -6,7 +6,6 @@ import com.daqsoft.log.util.appender.*;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.constans.Target;
 import org.ho.yaml.Yaml;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;

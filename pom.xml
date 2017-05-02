@@ -10,10 +10,21 @@
     <version>0.0.1</version>
     <modules>
         <module>log-util</module>
-        <module>SpringBoot</module>
         <module>spring-boot-logger-starter</module>
+        <module>logger-demo</module>
     </modules>
-
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>User Project Release</name>
+            <url>http://nexus.daqsoft.com/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>User Project SNAPSHOTS</name>
+            <url>http://nexus.daqsoft.com/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
     <repositories>
         <repository>
             <id>ShawnShoper</id>

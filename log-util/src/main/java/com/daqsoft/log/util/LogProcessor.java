@@ -2,7 +2,6 @@ package com.daqsoft.log.util;
 
 import com.daqsoft.log.util.annotation.LogModel;
 import com.daqsoft.log.util.appender.Appender;
-import com.daqsoft.log.util.appender.LogPattern;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.constans.Constans;
 import com.daqsoft.log.util.queue.LogQueue;
@@ -19,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class LogProcessor {
     private static int pid = Integer.valueOf(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
-    List<Appender> appenders = new ArrayList<>();
+    private List<Appender> appenders = new ArrayList<>();
 
     public LogProcessor(List<Appender> appenders) {
         this.appenders = appenders;

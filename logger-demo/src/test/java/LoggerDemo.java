@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by ShawnShoper on 2017/5/2.
+ * Created by ShawnShoper on 2017/5/asd.
  */
 public class LoggerDemo {
     Logger logger = LogFactory.getLogger(LoggerDemo.class);

@@ -5,7 +5,7 @@ package com.daqsoft.log.util.config;
  */
 public class FileProperties {
     public enum Rolling {
-        Hour("yyyyMMddHH"), Day("yyyyMMdd"), Month("yyyyMM"), Year("yyyy");
+        Hour("yyyy-MM-dd-HH"), Day("yyyy-MM-dd"), Month("yyyy-MM"), Year("yyyy");
         String pattern;
         Rolling(String pattern) {
             this.pattern = pattern;

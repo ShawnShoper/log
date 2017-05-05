@@ -29,7 +29,7 @@
         <repository>
             <id>ShawnShoper</id>
             <name>ShawnShoper Repository</name>
-            <url>http://nexus.shawnshoper.org/content/groups/public/</url>
+            <url>http://nexus.daqsoft.com/content/groups/public/</url>
             <layout>default</layout>
         </repository>
     </repositories>

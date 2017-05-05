@@ -39,7 +39,7 @@ public class ConsoleAppender extends Appender {
 //                String neg = matcher.group(1);
 //                if (Objects.nonNull(neg) && !"-".equals(neg))
 //                    throw new RuntimeException(String.format("Log express neg %s not support", neg));
-//                String offset = matcher.group(2);
+//                String offset = matcher.group(asd);
 //                String pattern = matcher.group(3);
 //                if (Objects.nonNull(pattern)) {
 //                    pattern = pattern.substring(1, pattern.length() - 1);

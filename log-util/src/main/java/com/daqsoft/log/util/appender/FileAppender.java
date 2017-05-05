@@ -69,13 +69,14 @@ public class FileAppender extends Appender {
 
     /**
      * 检查输出流是否需要重定向
-     *
      * @return 是否重定向
      */
     private synchronized boolean plantOutputStream(int size) throws FileNotFoundException {
         boolean change = false;
+        String pattern = DateUtil.timeToString(fileProperties.getRolling().getPattern(), System.currentTimeMillis());
         if (StringUtil.nonEmpty(rollingPattern)) {
-            int nowRolling = Integer.valueOf(DateUtil.timeToString(fileProperties.getRolling().getPattern(), System.currentTimeMillis()));
+            //去除'-'占位符,计算文件有效期
+            int nowRolling = Integer.valueOf(pattern.replace("-",""));
             if (nowRolling > rolling) {
                 rolling = nowRolling;
                 change = true;
@@ -96,7 +97,7 @@ public class FileAppender extends Appender {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            outputStream = new FileOutputStream(new File(fileDir + File.separator + fileName + (StringUtil.nonEmpty(String.valueOf(rolling)) ? "-" + rolling : "") + (segmentCount > 0 ? "-" + segmentCount : "")), true);
+            outputStream = new FileOutputStream(new File(fileDir + File.separator + fileName + (StringUtil.nonEmpty(String.valueOf(pattern)) ? "-" + pattern : "") + (segmentCount > 0 ? "-" + segmentCount : "")), true);
         }
         return change;
     }

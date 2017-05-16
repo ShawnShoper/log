@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by ShawnShoper on 2017/4/18.
  * 日志处理类
+ * TODO 这里使用线程池,通过Runtime.getRuntime().addShutdownHook()的方式可以在程序被关闭的时候进行关闭
  */
 public class LogProcessor {
     private static int pid = Integer.valueOf(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);

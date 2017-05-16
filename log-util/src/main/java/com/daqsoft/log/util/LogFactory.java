@@ -6,6 +6,7 @@ import com.daqsoft.log.util.appender.*;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.constans.Target;
 import org.ho.yaml.Yaml;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,6 +78,8 @@ public class LogFactory {
                 appenders.add(new FileAppender(logProperties, logPatterns));
             else if (target == Target.Sout)
                 appenders.add(new ConsoleAppender(logProperties, logPatterns));
+            else if(target == Target.Kafka)
+                appenders.add(new KafkaAppender(logProperties));
             else
                 throw new RuntimeException("Target " + target + " not support yet");
 

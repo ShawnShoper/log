@@ -2,7 +2,9 @@ package com.daqsoft.log.util.appender;
 
 import com.daqsoft.commons.core.DateUtil;
 import com.daqsoft.log.util.Log;
+import com.daqsoft.log.util.config.LogPattern;
 import com.daqsoft.log.util.config.LogProperties;
+import com.daqsoft.log.util.config.Tag;
 import com.daqsoft.log.util.constans.Constans;
 import org.fusesource.jansi.Ansi;
 

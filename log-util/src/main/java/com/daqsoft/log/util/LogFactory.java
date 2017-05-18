@@ -3,7 +3,9 @@ package com.daqsoft.log.util;
 
 import com.daqsoft.commons.core.StringUtil;
 import com.daqsoft.log.util.appender.*;
+import com.daqsoft.log.util.config.LogPattern;
 import com.daqsoft.log.util.config.LogProperties;
+import com.daqsoft.log.util.config.Tag;
 import com.daqsoft.log.util.constans.Target;
 import org.ho.yaml.Yaml;
 

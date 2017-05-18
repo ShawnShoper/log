@@ -12,27 +12,36 @@
         <module>log-util</module>
         <module>spring-boot-logger-starter</module>
         <module>logger-demo</module>
+        <module>log-server</module>
+        <module>log-config-api</module>
     </modules>
     <distributionManagement>
         <repository>
             <id>releases</id>
             <name>User Project Release</name>
-            <url>http://nexus.daqsoft.com/content/repositories/releases/</url>
+            <url>http://nexus.daqsoft.com/repository/releases/</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>User Project SNAPSHOTS</name>
-            <url>http://nexus.daqsoft.com/content/repositories/snapshots/</url>
+            <url>http://nexus.daqsoft.com/repository/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
     <repositories>
         <repository>
             <id>ShawnShoper</id>
             <name>ShawnShoper Repository</name>
-            <url>http://nexus.daqsoft.com/content/groups/public/</url>
+            <url>http://nexus.daqsoft.com/repository/public/</url>
             <layout>default</layout>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>ShawnShoper</id>
+            <name>ShawnShoper Repository</name>
+            <url>http://nexus.daqsoft.com/repository/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
     <dependencyManagement>
         <dependencies>
             <dependency>

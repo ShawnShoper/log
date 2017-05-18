@@ -1,4 +1,4 @@
-package com.daqsoft.log.util.appender;
+package com.daqsoft.log.util.config;
 
 /**
  * 日志模板

@@ -3,8 +3,7 @@ package com.daqsoft.log.util.appender;
 import com.daqsoft.commons.core.DateUtil;
 import com.daqsoft.commons.core.StringUtil;
 import com.daqsoft.log.util.Log;
-import com.daqsoft.log.util.config.FileProperties;
-import com.daqsoft.log.util.config.LogProperties;
+import com.daqsoft.log.util.config.*;
 
 import java.io.*;
 import java.util.Date;

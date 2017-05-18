@@ -4,6 +4,7 @@ import com.daqsoft.log.util.constans.Target;
 
 /**
  * Created by ShawnShoper on 2016/12/19 0019.
+ * 日志配置类
  */
 
 public class LogProperties {
@@ -12,6 +13,7 @@ public class LogProperties {
     private int port;
     private String application;
     private FileProperties fileProperties;
+    private KafkaProperties kafkaProperties;
     private String partten;
     public FileProperties getFileProperties() {
         return fileProperties;
@@ -19,6 +21,14 @@ public class LogProperties {
 
     public String getPartten() {
         return partten;
+    }
+
+    public KafkaProperties getKafkaProperties() {
+        return kafkaProperties;
+    }
+
+    public void setKafkaProperties(KafkaProperties kafkaProperties) {
+        this.kafkaProperties = kafkaProperties;
     }
 
     public void setPartten(String partten) {

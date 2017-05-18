@@ -1,4 +1,4 @@
-package com.daqsoft.log.util.appender;
+package com.daqsoft.log.util.config;
 
 /**
  * Created by ShawnShoper on 2017/4/28.
@@ -6,8 +6,8 @@ package com.daqsoft.log.util.appender;
  */
 public enum FileUnit {
     KB("kb", 1024), MB("kb", 1024 * KB.size), GB("gb", 1024 * MB.size), TB("tb", 1024 * GB.size);
-    String name;
-    int size;
+    public String name;
+    public int size;
 
     FileUnit(String name, int size) {
         this.name = name;

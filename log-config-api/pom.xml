@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>log-config-kafka-api</module>
+        <module>log-config-core</module>
     </modules>
     <dependencies>
         <dependency>

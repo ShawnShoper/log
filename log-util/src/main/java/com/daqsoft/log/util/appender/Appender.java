@@ -1,6 +1,6 @@
 package com.daqsoft.log.util.appender;
 
-import com.daqsoft.log.util.Log;
+import com.daqsoft.log.core.serialize.Log;
 import com.daqsoft.log.util.config.LogProperties;
 
 import java.io.IOException;
@@ -14,7 +14,6 @@ public abstract class Appender {
 
     public Appender(LogProperties logProperties) {
         this.logProperties = logProperties;
-        this.init();
     }
 
     public abstract void write(Log log) throws IOException;

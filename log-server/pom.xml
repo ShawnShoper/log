@@ -8,18 +8,11 @@
         <version>0.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>log-server</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>log-server-transfer</module>
+        <module>log-server-bootstarp</module>
+    </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.daqsoft.log</groupId>
-            <artifactId>log-config-kafka-api</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-    </dependencies>
 </project>

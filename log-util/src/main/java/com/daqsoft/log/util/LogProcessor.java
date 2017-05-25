@@ -1,9 +1,11 @@
 package com.daqsoft.log.util;
 
+import com.daqsoft.log.core.config.Constans;
+import com.daqsoft.log.core.serialize.Business;
+import com.daqsoft.log.core.serialize.Log;
 import com.daqsoft.log.util.annotation.LogModel;
 import com.daqsoft.log.util.appender.Appender;
 import com.daqsoft.log.util.config.LogProperties;
-import com.daqsoft.log.util.constans.Constans;
 import com.daqsoft.log.util.queue.LogQueue;
 
 import java.io.IOException;
@@ -38,6 +40,8 @@ public class LogProcessor {
 
         @Override
         public void run() {
+            //初始化各个Appender
+            appenders.stream().forEach(Appender::init);
             for (; !Thread.currentThread().isInterrupted(); ) {
                 try {
                     Log log = LogQueue.logQueue.poll(1, TimeUnit.SECONDS);

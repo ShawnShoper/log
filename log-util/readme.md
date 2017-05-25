@@ -1,8 +1,12 @@
 #   日志记录工具
+#版本变更<br>
+V0.0.2<br>
+1.提供kafka日志对接.(使用Kafka Appender时,请加上FileAppender做好Kafka连接不通时的日志备份)<br>
+V0.0.1<br>
+1.提供Console日志输出<br>
+2.提供File日志输出<br>
 
 #使用说明
-
-
 #### 在项目资源文件夹添加log.yml文件
 ```+yaml
 targets:    #记录器

@@ -2,7 +2,7 @@ package com.daqsoft.log.util.appender;
 
 import com.daqsoft.commons.core.DateUtil;
 import com.daqsoft.commons.core.StringUtil;
-import com.daqsoft.log.util.Log;
+import com.daqsoft.log.core.serialize.Log;
 import com.daqsoft.log.util.config.*;
 
 import java.io.*;
@@ -29,18 +29,18 @@ public class FileAppender extends Appender {
     List<LogPattern> logPatterns;
     public final static String PERCENT = "%";
 
-    public FileAppender(LogProperties logProperties, List<LogPattern> logPatterns) {
+    public FileAppender(final LogProperties logProperties, final List<LogPattern> logPatterns) {
         super(logProperties);
+        this.fileProperties = logProperties.getFileProperties();
         this.logPatterns = logPatterns;
     }
 
     @Override
     public void init() {
-        this.fileProperties = logProperties.getFileProperties();
         fileName = fileProperties.getFileName();
         fileDir = this.fileProperties.getFileDir();
         File file = new File(fileDir);
-        if (!file.exists()) file.mkdirs();
+        if (!file.exists()) if(!file.mkdirs())throw new RuntimeException("Can not create dir ['" + fileDir + "'] ,maybe your current user no permission or has being used");
         if (Objects.nonNull(fileProperties.getRolling())) {
             rollingPattern = fileProperties.getRolling().getPattern();
         }
@@ -56,8 +56,6 @@ public class FileAppender extends Appender {
                 maxFileSize = cap * fileUnit.size;
             }
         }
-
-
 //        String fileName = fileProperties.getFileDir() + File.separator + fileProperties.getFileName();
     }
 
@@ -119,7 +117,7 @@ public class FileAppender extends Appender {
             }
     }
 
-    private String parseLog(Log log) {
+    protected String parseLog(Log log) {
         StringBuilder stringBuilder = new StringBuilder();
         logPatterns.stream().map(e -> {
             String name = e.getName();

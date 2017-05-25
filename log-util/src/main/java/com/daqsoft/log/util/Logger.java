@@ -1,7 +1,7 @@
 package com.daqsoft.log.util;
 
+import com.daqsoft.log.core.config.Constans;
 import com.daqsoft.log.util.config.LogProperties;
-import com.daqsoft.log.util.constans.Constans;
 
 import javax.annotation.PreDestroy;
 

@@ -1,6 +1,7 @@
 package com.daqsoft.log.util.config;
 
-import com.daqsoft.log.util.constans.Target;
+
+import com.daqsoft.log.core.config.Target;
 
 /**
  * Created by ShawnShoper on 2016/12/19 0019.
@@ -12,23 +13,25 @@ public class LogProperties {
     private String host;
     private int port;
     private String application;
+    private KafkaProperties kafka;
+
     private FileProperties fileProperties;
-    private KafkaProperties kafkaProperties;
     private String partten;
+
+    public KafkaProperties getKafka() {
+        return kafka;
+    }
+
+    public void setKafka(KafkaProperties kafka) {
+        this.kafka = kafka;
+    }
+
     public FileProperties getFileProperties() {
         return fileProperties;
     }
 
     public String getPartten() {
         return partten;
-    }
-
-    public KafkaProperties getKafkaProperties() {
-        return kafkaProperties;
-    }
-
-    public void setKafkaProperties(KafkaProperties kafkaProperties) {
-        this.kafkaProperties = kafkaProperties;
     }
 
     public void setPartten(String partten) {

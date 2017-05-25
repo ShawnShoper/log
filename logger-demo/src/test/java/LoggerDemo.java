@@ -1,7 +1,7 @@
+import com.daqsoft.log.core.config.Constans;
 import com.daqsoft.log.util.LogFactory;
 import com.daqsoft.log.util.Logger;
 import com.daqsoft.log.util.annotation.LogModel;
-import com.daqsoft.log.util.constans.Constans;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;

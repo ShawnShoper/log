@@ -52,5 +52,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.daqsoft.log</groupId>
+            <artifactId>log-config-core</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
 </project>

@@ -65,7 +65,7 @@ public class KafkaAppender extends Appender {
             String json = mapper.writeValueAsString(log);
             //Kafka key
             if (available.get()) {
-                ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topic, kid, json);
+                ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topic,0, kid, json);
                 producer.send(producerRecord);
                 producer.flush();
             }

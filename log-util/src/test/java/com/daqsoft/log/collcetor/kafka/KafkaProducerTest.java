@@ -10,7 +10,7 @@ public class KafkaProducerTest extends KafkaTest {
     @Test
     public void sendMessage() {
         for(int i = 0 ;i<3;i++) {
-            String topic = "test";
+            String topic = "test21";
             String message = "world-by java code";
             ProducerRecord<String, String> shawnshoperTest = new ProducerRecord<>(topic, message);
             producer.send(shawnshoperTest);

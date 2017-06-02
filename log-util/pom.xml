@@ -43,8 +43,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.10</artifactId>
-            <version>0.10.1.0</version>
+            <artifactId>kafka_2.12</artifactId>
+            <version>0.10.2.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

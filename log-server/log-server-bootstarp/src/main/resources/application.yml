@@ -24,12 +24,20 @@ spring:
     kafka:
       bootstrap-servers: 192.168.2.114:9092
       consumer:
-        group-id: log-collcetor
+        group-id: log-collcetor1
       template:
         default-topic: test
       listener:
-        concurrency: 2
+        concurrency: 1
+    data:
+      elasticsearch:
+        cluster-nodes: 192.168.2.114:9300
+        cluster-name: elasticsearch
+        repositories:
+          enabled: true
+
+
 com:
   cloudera:
     hdfs:
-      url:  hdfs://192.168.100.178:9000
+      url:  hdfs://192.168.100.178:8020

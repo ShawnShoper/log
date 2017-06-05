@@ -2,6 +2,7 @@ package com.daqsoft.log.asd;
 
 import com.daqsoft.log.util.LogFactory;
 import com.daqsoft.log.util.Logger;
+import com.daqsoft.log.util.annotation.LogModel;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,10 +17,10 @@ public class Applicatio {
 
     @PostConstruct
     public void init() {
-        logger.info("123");
         System.out.println("s");
     }
 
+    @LogModel("test123")
     @RequestMapping("/sss")
     public String hi() {
         logger.info("asdadadaasd");

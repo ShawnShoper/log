@@ -30,9 +30,11 @@ public class Logger {
     public void info(String logMsg) {
         log(logMsg, Constans.INFO);
     }
-
+    public String format(String formatter, Object... obj){
+        return String.format(formatter, obj);
+    }
     public void info(String formatter, Object... obj) {
-        info(String.format(formatter, obj));
+        info(format(formatter,obj));
     }
 
     public void warn(String logMsg) {
@@ -40,7 +42,7 @@ public class Logger {
     }
 
     public void warn(String formatter, Object... obj) {
-        warn(String.format(formatter, obj));
+        warn(format(formatter,obj));
     }
 
     private void debug(String logMsg) {
@@ -48,7 +50,7 @@ public class Logger {
     }
 
     public void debug(String formatter, Object... obj) {
-        debug(String.format(formatter, obj));
+        debug(format(formatter,obj));
     }
 
     public void error(String logMsg) {
@@ -56,7 +58,7 @@ public class Logger {
     }
 
     public void error(String formatter, Object... obj) {
-        error(String.format(formatter, obj));
+        error(format(formatter,obj));
     }
 
     /**

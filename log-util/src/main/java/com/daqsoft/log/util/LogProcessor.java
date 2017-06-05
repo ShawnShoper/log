@@ -71,7 +71,7 @@ public class LogProcessor {
             String methodName = lastCall.getMethodName();
             String className = lastCall.getClassName().toString();
             String model = null;
-            Optional<Method> first = Arrays.stream(Test.class.getDeclaredMethods()).filter(e -> e.getName().equals(methodName)).findFirst();
+            Optional<Method> first = Arrays.stream(Class.forName(className).getDeclaredMethods()).filter(e -> e.getName().equals(methodName)).findFirst();
             if (first.isPresent()) {
                 Method te = first.get();
                 LogModel annotation = te.getAnnotation(LogModel.class);

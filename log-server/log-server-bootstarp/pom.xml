@@ -18,7 +18,7 @@
         <dependency>
             <groupId>com.daqsoft.log</groupId>
             <artifactId>log-config-kafka-api</artifactId>
-            <version>0.0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.daqsoft.log</groupId>
             <artifactId>log-config-core</artifactId>
-            <version>0.0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
@@ -52,10 +52,21 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.daqsoft.log</groupId>-->
-            <!--<artifactId>transfer-hdfs</artifactId>-->
-            <!--<version>0.0.1</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.daqsoft.log</groupId>
+            <artifactId>transfer-elasticsearch</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.daqsoft.log</groupId>
+            <artifactId>transfer-hdfs</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 </project>

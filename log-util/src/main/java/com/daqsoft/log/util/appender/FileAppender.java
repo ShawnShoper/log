@@ -2,8 +2,10 @@ package com.daqsoft.log.util.appender;
 
 import com.daqsoft.commons.core.DateUtil;
 import com.daqsoft.commons.core.StringUtil;
+import com.daqsoft.log.core.config.Constans;
 import com.daqsoft.log.core.serialize.Log;
 import com.daqsoft.log.util.config.*;
+import scala.collection.immutable.Stream;
 
 import java.io.*;
 import java.util.Date;
@@ -119,28 +121,39 @@ public class FileAppender extends Appender {
 
     protected String parseLog(Log log) {
         StringBuilder stringBuilder = new StringBuilder();
-        logPatterns.stream().map(e -> {
-            String name = e.getName();
-            String tmp = null;
-            if (Tag.T.name.equals(name)) {
-                String time = DateUtil.dateToString(e.getPattern(), new Date(log.getTime()));
-                tmp = time;
-            } else if (Tag.C.name.equals(name)) {
-                tmp = log.getBusiness().getContent();
-            } else if (Tag.L.name.equals(name)) {
-                String tag_name = log.getBusiness().getLevel();
-                tmp = tag_name;
-            } else if (Tag.P.name.equals(name)) {
-                tmp = String.valueOf(log.getPid());
-            } else if (Tag.MN.name.equals(name)) {
-                tmp = String.valueOf(log.getMethodName());
-            } else if (Tag.LN.name.equals(name)) {
-                tmp = String.valueOf(log.getLineNumber());
-            } else if (Tag.CN.name.equals(name)) {
-                tmp = String.valueOf(log.getClassName());
-            }
-            return tmp + "\001";
-        }).filter(Objects::nonNull).forEach(stringBuilder::append);
+        stringBuilder.append(log.getTime()).append(Constans.PLACEHOLDER)
+                .append(log.getApplication()).append(Constans.PLACEHOLDER)
+                .append(log.getClassName()).append(Constans.PLACEHOLDER)
+                .append(log.getLineNumber()).append(Constans.PLACEHOLDER)
+                .append(log.getMethodName()).append(Constans.PLACEHOLDER)
+                .append(log.getPid()).append(Constans.PLACEHOLDER)
+                .append(log.getSource()).append(Constans.PLACEHOLDER)
+                .append(log.getBusiness().getVia()).append(Constans.PLACEHOLDER)
+                .append(log.getBusiness().getLevel()).append(Constans.PLACEHOLDER)
+                .append(log.getBusiness().getModel()).append(Constans.PLACEHOLDER)
+                .append(log.getBusiness().getContent()).append(Constans.PLACEHOLDER);
+//        logPatterns.stream().map(e -> {
+//            String name = e.getName();
+//            String tmp = null;
+//            if (Tag.T.name.equals(name)) {
+//                String time = DateUtil.dateToString(e.getPattern(), new Date(log.getTime()));
+//                tmp = time;
+//            } else if (Tag.C.name.equals(name)) {
+//                tmp = log.getBusiness().getContent();
+//            } else if (Tag.L.name.equals(name)) {
+//                String tag_name = log.getBusiness().getLevel();
+//                tmp = tag_name;
+//            } else if (Tag.P.name.equals(name)) {
+//                tmp = String.valueOf(log.getPid());
+//            } else if (Tag.MN.name.equals(name)) {
+//                tmp = String.valueOf(log.getMethodName());
+//            } else if (Tag.LN.name.equals(name)) {
+//                tmp = String.valueOf(log.getLineNumber());
+//            } else if (Tag.CN.name.equals(name)) {
+//                tmp = String.valueOf(log.getClassName());
+//            }
+//            return tmp + "\001";
+//        }).filter(Objects::nonNull).forEach(stringBuilder::append);
         stringBuilder.setLength(stringBuilder.length() - 1);
         return stringBuilder.toString() + "\r\n";
     }

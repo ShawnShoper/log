@@ -5,6 +5,7 @@ import com.daqsoft.commons.core.StringUtil;
 import com.daqsoft.log.core.config.Constans;
 import com.daqsoft.log.core.serialize.Log;
 import com.daqsoft.log.util.config.*;
+import scala.Int;
 import scala.collection.immutable.Stream;
 
 import java.io.*;
@@ -42,7 +43,8 @@ public class FileAppender extends Appender {
         fileName = fileProperties.getFileName();
         fileDir = this.fileProperties.getFileDir();
         File file = new File(fileDir);
-        if (!file.exists()) if(!file.mkdirs())throw new RuntimeException("Can not create dir ['" + fileDir + "'] ,maybe your current user no permission or has being used");
+        if (!file.exists()) if (!file.mkdirs())
+            throw new RuntimeException("Can not create dir ['" + fileDir + "'] ,maybe your current user no permission or has being used");
         if (Objects.nonNull(fileProperties.getRolling())) {
             rollingPattern = fileProperties.getRolling().getPattern();
         }
@@ -68,6 +70,7 @@ public class FileAppender extends Appender {
 
     /**
      * 检查输出流是否需要重定向
+     *
      * @return 是否重定向
      */
     private synchronized boolean plantOutputStream(int size) throws FileNotFoundException {
@@ -75,7 +78,7 @@ public class FileAppender extends Appender {
         String pattern = DateUtil.timeToString(fileProperties.getRolling().getPattern(), System.currentTimeMillis());
         if (StringUtil.nonEmpty(rollingPattern)) {
             //去除'-'占位符,计算文件有效期
-            int nowRolling = Integer.valueOf(pattern.replace("-",""));
+            int nowRolling = Integer.valueOf(pattern.replace("-", ""));
             if (nowRolling > rolling) {
                 rolling = nowRolling;
                 change = true;
@@ -127,7 +130,7 @@ public class FileAppender extends Appender {
                 .append(log.getLineNumber()).append(Constans.PLACEHOLDER)
                 .append(log.getMethodName()).append(Constans.PLACEHOLDER)
                 .append(log.getPid()).append(Constans.PLACEHOLDER)
-                .append(log.getSource()).append(Constans.PLACEHOLDER)
+                .append(logProperties.getHost() + logProperties.getPort()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getVia()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getLevel()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getModel()).append(Constans.PLACEHOLDER)
@@ -157,4 +160,22 @@ public class FileAppender extends Appender {
         stringBuilder.setLength(stringBuilder.length() - 1);
         return stringBuilder.toString() + "\r\n";
     }
+
+//    public static Log unParseLog(String logStr) {
+//        String[] logs = logStr.split(Constans.PLACEHOLDER);
+//        Log log = new Log();
+//        log.setTime(Objects.nonNull(logs[0]) ? Integer.valueOf(logs[0]) : 0);
+//        log.setApplication(logs[1]);
+//        log.setClassName(logs[2]);
+//        log.setLineNumber(Objects.nonNull(logs[3]) ? Integer.valueOf(logs[3]) : 0);
+//        logs[3];
+//        logs[4];
+//        logs[5];
+//        logs[6];
+//        logs[7];
+//        logs[8];
+//        logs[9];
+//
+//        return log;
+//    }
 }

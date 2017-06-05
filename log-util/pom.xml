@@ -5,10 +5,22 @@
     <parent>
         <artifactId>logger</artifactId>
         <groupId>com.daqsoft.log</groupId>
-        <version>0.0.1</version>
+        <version>0.0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>log-util</artifactId>
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>User Project Release</name>
+            <url>http://nexus.daqsoft.com/repository/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>User Project SNAPSHOTS</name>
+            <url>http://nexus.daqsoft.com/repository/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
@@ -39,7 +51,7 @@
         <dependency>
             <groupId>com.daqsoft.log</groupId>
             <artifactId>log-config-kafka-api</artifactId>
-            <version>0.0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
@@ -55,7 +67,7 @@
         <dependency>
             <groupId>com.daqsoft.log</groupId>
             <artifactId>log-config-core</artifactId>
-            <version>0.0.1</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

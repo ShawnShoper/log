@@ -3,6 +3,7 @@ package com.daqsoft.log.util.appender;
 import com.daqsoft.commons.core.DateUtil;
 import com.daqsoft.commons.core.StringUtil;
 import com.daqsoft.log.core.config.Constans;
+import com.daqsoft.log.core.serialize.Business;
 import com.daqsoft.log.core.serialize.Log;
 import com.daqsoft.log.util.config.*;
 import scala.Int;
@@ -161,21 +162,22 @@ public class FileAppender extends Appender {
         return stringBuilder.toString() + "\r\n";
     }
 
-//    public static Log unParseLog(String logStr) {
-//        String[] logs = logStr.split(Constans.PLACEHOLDER);
-//        Log log = new Log();
-//        log.setTime(Objects.nonNull(logs[0]) ? Integer.valueOf(logs[0]) : 0);
-//        log.setApplication(logs[1]);
-//        log.setClassName(logs[2]);
-//        log.setLineNumber(Objects.nonNull(logs[3]) ? Integer.valueOf(logs[3]) : 0);
-//        logs[3];
-//        logs[4];
-//        logs[5];
-//        logs[6];
-//        logs[7];
-//        logs[8];
-//        logs[9];
-//
-//        return log;
-//    }
+    public static Log UnParseLog(String logStr) {
+        String[] logs = logStr.split(Constans.PLACEHOLDER);
+        Log log = new Log();
+        log.setTime(Objects.nonNull(logs[0]) ? Integer.valueOf(logs[0]) : 0);
+        log.setApplication(logs[1]);
+        log.setClassName(logs[2]);
+        log.setLineNumber(Objects.nonNull(logs[3]) ? Integer.valueOf(logs[3]) : 0);
+        log.setMethodName(logs[3]);
+        log.setPid(StringUtil.isEmpty(logs[4]) ? 0 : Integer.valueOf(logs[4]));
+        log.setSource(logs[5]);
+        Business business = new Business();
+        business.setVia(logs[6]);
+        business.setLevel(logs[7]);
+        business.setModel(logs[8]);
+        business.setContent(logs[9]);
+        log.setBusiness(business);
+        return log;
+    }
 }

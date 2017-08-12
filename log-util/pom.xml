@@ -52,7 +52,7 @@
         <dependency>
             <groupId>com.daqsoft.log</groupId>
             <artifactId>log-config-kafka-api</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>com.daqsoft.log</groupId>
             <artifactId>log-config-core</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.2</version>
         </dependency>
     </dependencies>
 </project>

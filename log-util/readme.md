@@ -1,5 +1,7 @@
 #   日志记录工具
 #版本变更<br>
+V0.0.21<br>
+1.提供日志级别配置
 V0.0.2<br>
 1.提供kafka日志对接.(使用Kafka Appender时,请加上FileAppender做好Kafka连接不通时的日志备份)<br>
 V0.0.1<br>
@@ -9,6 +11,7 @@ V0.0.1<br>
 #使用说明
 #### 在项目资源文件夹添加log.yml文件
 ```+yaml
+logLevel:   Debug //日志级别
 targets:    #记录器
   - File    #启用文件Appender
   - Sout    #启用控制台Appender
@@ -37,7 +40,7 @@ partten:  "%-23{yyyy-MM-dd HH:mm:ss.sss}t %5l %-5p --- [%15mn:%ln] %-41cn: %c"
 <dependency>
   <groupId>com.daqsoft.log</groupId>
   <artifactId>log-util</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.21</version>
 </dependency>
 ```
 #### 使用方式

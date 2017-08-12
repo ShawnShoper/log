@@ -1,4 +1,4 @@
-package com.daqsoft.log.util.config;
+package com.daqsoft.log.util.constans;
 
 public enum Tag {
     T("t", 23), L("l", 5), P("p", -5), MN("mn", 30), LN("ln", -5), CN("cn", 30), C("c", 0);

@@ -5,12 +5,12 @@ import com.daqsoft.commons.core.StringUtil;
 import com.daqsoft.log.core.config.Constans;
 import com.daqsoft.log.core.serialize.Business;
 import com.daqsoft.log.core.serialize.Log;
-import com.daqsoft.log.util.config.*;
-import scala.Int;
-import scala.collection.immutable.Stream;
+import com.daqsoft.log.util.config.FileProperties;
+import com.daqsoft.log.util.config.LogPattern;
+import com.daqsoft.log.util.config.LogProperties;
+import com.daqsoft.log.util.constans.FileCap;
 
 import java.io.*;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -57,7 +57,7 @@ public class FileAppender extends Appender {
             if (matcher.find()) {
                 int cap = Integer.valueOf(matcher.group(1));
                 String unit = matcher.group(2);
-                FileUnit fileUnit = FileUnit.valueOf(unit);
+                FileCap fileUnit = FileCap.valueOf(unit);
                 maxFileSize = cap * fileUnit.size;
             }
         }

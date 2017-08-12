@@ -2,6 +2,7 @@ package com.daqsoft.log.util.config;
 
 
 import com.daqsoft.log.core.config.Target;
+import com.daqsoft.log.util.constans.LogLevel;
 
 /**
  * Created by ShawnShoper on 2016/12/19 0019.
@@ -9,14 +10,30 @@ import com.daqsoft.log.core.config.Target;
  */
 
 public class LogProperties {
+    //输出终端
     private Target[] targets;
+    //系统的host
     private String host;
+    //系统的port
     private int port;
+    //系统名
     private String application;
+    //kafka配置
     private KafkaProperties kafka;
-
+    //日志级别
+    private LogLevel logLevel = LogLevel.Debug;
+    //File配置
     private FileProperties fileProperties;
+    //日志输出模板
     private String partten;
+
+    public LogLevel getLogLevel() {
+        return logLevel;
+    }
+
+    public void setLogLevel(LogLevel logLevel) {
+        this.logLevel = logLevel;
+    }
 
     public KafkaProperties getKafka() {
         return kafka;

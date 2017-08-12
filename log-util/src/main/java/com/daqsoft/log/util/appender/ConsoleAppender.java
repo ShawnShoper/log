@@ -5,7 +5,7 @@ import com.daqsoft.log.core.config.Constans;
 import com.daqsoft.log.core.serialize.Log;
 import com.daqsoft.log.util.config.LogPattern;
 import com.daqsoft.log.util.config.LogProperties;
-import com.daqsoft.log.util.config.Tag;
+import com.daqsoft.log.util.constans.Tag;
 import org.fusesource.jansi.Ansi;
 
 import java.io.IOException;

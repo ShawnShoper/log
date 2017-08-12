@@ -9,7 +9,7 @@ import com.daqsoft.log.util.appender.FileAppender;
 import com.daqsoft.log.util.appender.KafkaAppender;
 import com.daqsoft.log.util.config.LogPattern;
 import com.daqsoft.log.util.config.LogProperties;
-import com.daqsoft.log.util.config.Tag;
+import com.daqsoft.log.util.constans.Tag;
 import org.ho.yaml.Yaml;
 
 import java.io.FileNotFoundException;
@@ -35,7 +35,6 @@ public class LogFactory {
     }
 
     private static void init() {
-
         try {
             logProperties = Yaml.loadType(LogProperties.class.getResourceAsStream("/log.yml"), LogProperties.class);
         } catch (FileNotFoundException e) {
@@ -107,7 +106,7 @@ public class LogFactory {
                 if (Objects.isNull(logProcessor))
                     init();
             }
-        return new Logger(clazz, logProcessor);
+        return new Logger(clazz, logProcessor,logProperties);
     }
 
     private LogFactory() {

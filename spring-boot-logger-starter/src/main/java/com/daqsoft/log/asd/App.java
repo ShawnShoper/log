@@ -12,8 +12,8 @@ import javax.annotation.PostConstruct;
  * Created by ShawnShoper on 2017/5/3.
  */
 @RestController
-public class Applicatio {
-    Logger logger = LogFactory.getLogger(Applicatio.class);
+public class App {
+    Logger logger = LogFactory.getLogger(App.class);
 
     @PostConstruct
     public void init() {
@@ -22,8 +22,9 @@ public class Applicatio {
 
     @LogModel("test123")
     @RequestMapping("/sss")
-    public String hi() {
-        logger.info("asdadadaasd");
+    public String wordCount() {
+        if (logger.isInfoEnable())
+            logger.info("asdadadaasd");
         return "hello world";
     }
 }

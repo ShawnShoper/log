@@ -1,3 +1,4 @@
+logLevel: Info
 targets:
   - Sout
   - File
@@ -14,4 +15,4 @@ fileProperties:
   fileName: log.log
   rolling:  Hour
   fileSize: 1MB
-partten:  "%-23{yyyy-MM-dd HH:mm:ss.sss}t %5l %-5p --- [%15mn:%ln] %-41cn: %c"
+partten:  "%-23{yyyy-MM-dd HH:mm:ss.sss}t %5l %p --- [%15mn] %-41cn: %c"

@@ -1,10 +1,7 @@
 package com.daqsoft.log.dao;
 
 import com.daqsoft.log.domain.App;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 /**
  * Created by ShawnShoper on 2017/5/24.

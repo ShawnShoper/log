@@ -1,7 +1,7 @@
 package com.daqsoft.log.util.constans;
 
 public enum LogLevel {
-    Debug("DEBUG", 0x0), Info("INFO", 0x1), Warn("Warn", 0x2), Error("ERROR", 0x3), Fatal("FATAL", 0x4);
+    Debug("DEBUG", 0), Info("INFO", 1), Warn("Warn", 2), Error("ERROR", 3), Fatal("FATAL", 4);
 
     LogLevel(String name, int value) {
         this.name = name;

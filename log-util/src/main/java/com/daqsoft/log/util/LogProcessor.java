@@ -3,6 +3,7 @@ package com.daqsoft.log.util;
 import com.daqsoft.log.core.config.Constans;
 import com.daqsoft.log.core.serialize.Business;
 import com.daqsoft.log.core.serialize.Log;
+import com.daqsoft.log.util.annotation.ContentType;
 import com.daqsoft.log.util.annotation.LogModel;
 import com.daqsoft.log.util.appender.Appender;
 import com.daqsoft.log.util.config.LogProperties;
@@ -46,7 +47,7 @@ public class LogProcessor {
                 try {
                     Log log = LogQueue.logQueue.poll(1, TimeUnit.SECONDS);
                     if (Objects.nonNull(log)) {
-                        appenders.stream().forEach(e->{
+                        appenders.stream().forEach(e -> {
                             try {
                                 e.write(log);
                             } catch (IOException excep) {
@@ -71,21 +72,30 @@ public class LogProcessor {
             String methodName = lastCall.getMethodName();
             String className = lastCall.getClassName().toString();
             String model = null;
+            String contentType = com.daqsoft.log.util.config.ContentType.STR.name();
             Optional<Method> first = Arrays.stream(Class.forName(className).getDeclaredMethods()).filter(e -> e.getName().equals(methodName)).findFirst();
             if (first.isPresent()) {
                 Method te = first.get();
                 LogModel annotation = te.getAnnotation(LogModel.class);
                 if (Objects.nonNull(annotation))
                     model = annotation.value();
+                ContentType ct = te.getAnnotation(ContentType.class);
+                if (Objects.nonNull(ct))
+                    contentType = ct.value().name();
             } else {
                 LogModel classLogModel = clazz.getAnnotation(LogModel.class);
                 if (Objects.nonNull(classLogModel))
                     model = classLogModel.value();
+                ContentType ct = clazz.getAnnotation(ContentType.class);
+                if (Objects.nonNull(ct))
+                    contentType = ct.value().name();
+
             }
+
             LogProperties logConfig = LogFactory.getLogProperties();
             Log log = new Log();
             log.setTime(System.currentTimeMillis());
-            log.setContentType(Constans.TYPE_STRING);
+            log.setContentType(contentType);
             log.setApplication(logConfig.getApplication());
             log.setLineNumber(lastCall.getLineNumber());
             log.setMethodName(methodName);

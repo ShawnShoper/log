@@ -29,14 +29,14 @@ public class CollcetorQueue {
     @PostConstruct
     public void init() {
 
+        esTransfer.initilize();
         Thread thread = new Thread(() -> {
             Log poll;
             for (; !Thread.currentThread().isInterrupted(); ) {
                 try {
                     while (Objects.isNull(poll = collcetorQueue.poll(3, TimeUnit.SECONDS))) ;
                     try {
-                        hdfsTransfer.initilize();
-                        hdfsTransfer.write(poll);
+                        esTransfer.write(poll);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

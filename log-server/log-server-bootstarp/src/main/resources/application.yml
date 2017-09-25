@@ -22,7 +22,7 @@ spring:
         poolPreparedStatements: true
         maxOpenPreparedStatements: 20
     kafka:
-      bootstrap-servers: 192.168.2.114:9092
+      bootstrap-servers: 192.168.2.115:9092
       consumer:
         group-id: log-collcetor1
       template:
@@ -31,13 +31,11 @@ spring:
         concurrency: 1
     data:
       elasticsearch:
-        cluster-nodes: 192.168.2.114:9300
+        cluster-nodes: 192.168.2.56:9300
         cluster-name: elasticsearch
         repositories:
           enabled: true
-
-
-com:
-  cloudera:
-    hdfs:
-      url:  hdfs://192.168.100.178:8020
+#com:
+#  cloudera:
+#    hdfs:
+#      url:  hdfs://192.168.100.178:8020

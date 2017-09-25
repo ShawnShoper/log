@@ -8,20 +8,21 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
  * Created by ShawnShoper on 2017/5/27.
  */
 @Document(indexName = "kafka-log", type = "exernal", shards = 1, replicas = 0)
-public class LogIndex extends Log {
+public class LogIndex {
     @Id
     private String id;
     //日志来源
     private String application;
     //时间戳
     @Field(type = FieldType.Date)
-    private long time;
+    private Date time;
     //日志内容格式
     private String contentType = Constans.TYPE_STRING;
     //来源地址 HOST:PORT
@@ -65,11 +66,11 @@ public class LogIndex extends Log {
         this.application = application;
     }
 
-    public long getTime() {
+    public Date getTime() {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(Date time) {
         this.time = time;
     }
 
@@ -116,7 +117,7 @@ public class LogIndex extends Log {
         this.setMethodName(log.getMethodName());
         this.setPid(log.getPid());
         this.setSource(log.getSource());
-        this.setTime(log.getTime());
+        this.setTime(new Date(log.getTime()));
     }
 
     public String getId() {

@@ -1,0 +1,9 @@
+server:
+  port: 8084
+spring:
+  data:
+    elasticsearch:
+      cluster-nodes: 192.168.2.56:9300
+      cluster-name: elasticsearch
+      repositories:
+        enabled: true

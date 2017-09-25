@@ -28,8 +28,8 @@ public class KafkaTest {
 //            props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 //            consumer = new KafkaConsumer<>(props);
             Properties props1 = new Properties();
-            props1.put("bootstrap.servers", "192.168.2.114:9092");
-            props1.put("zookeeper.connect", "192.168.2.114:2181");
+            props1.put("bootstrap.servers", "192.168.2.115:9092");
+            props1.put("zookeeper.connect", "192.168.2.115:2181");
             props1.put("group.id", "test");
             props1.put("auto.offset.reset", "earliest");
             props1.put("enable.auto.commit", "true");
@@ -41,7 +41,7 @@ public class KafkaTest {
         }
         {
             Properties props = new Properties();
-            props.put("bootstrap.servers", "192.168.2.114:9092");
+            props.put("bootstrap.servers", "192.168.2.115:9092");
             props.put("acks", "all");
             props.put("retries", 0);
             props.put("batch.size", 16384);

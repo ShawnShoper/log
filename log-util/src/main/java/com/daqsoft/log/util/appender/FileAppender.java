@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
  * 输出日志到File
  */
 public class FileAppender extends Appender {
+    private static String majorVersion = "1";
     FileProperties fileProperties;
     private OutputStream outputStream;
     String rollingPattern;
@@ -131,11 +132,14 @@ public class FileAppender extends Appender {
                 .append(log.getLineNumber()).append(Constans.PLACEHOLDER)
                 .append(log.getMethodName()).append(Constans.PLACEHOLDER)
                 .append(log.getPid()).append(Constans.PLACEHOLDER)
-                .append(logProperties.getHost() + logProperties.getPort()).append(Constans.PLACEHOLDER)
+                .append(logProperties.getHost()).append(Constans.PLACEHOLDER)
+                .append( logProperties.getPort()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getVia()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getLevel()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getModel()).append(Constans.PLACEHOLDER)
-                .append(log.getBusiness().getContent()).append(Constans.PLACEHOLDER);
+                .append(log.getBusiness().getContent()).append(Constans.PLACEHOLDER)
+                .append(majorVersion)
+                .append(Constans.OVER);
 //        logPatterns.stream().map(e -> {
 //            String name = e.getName();
 //            String tmp = null;
@@ -171,7 +175,8 @@ public class FileAppender extends Appender {
         log.setLineNumber(Objects.nonNull(logs[3]) ? Integer.valueOf(logs[3]) : 0);
         log.setMethodName(logs[3]);
         log.setPid(StringUtil.isEmpty(logs[4]) ? 0 : Integer.valueOf(logs[4]));
-        log.setSource(logs[5]);
+        log.setHost(logs[5]);
+        log.setPort(Integer.valueOf(logs[6]));
         Business business = new Business();
         business.setVia(logs[6]);
         business.setLevel(logs[7]);

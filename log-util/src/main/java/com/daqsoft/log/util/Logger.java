@@ -30,8 +30,8 @@ public class Logger {
     public void destroy() {
     }
 
-    public void info(String logMsg) {
-        log(logMsg, Constans.INFO);
+    public void info(String channel,String logMsg) {
+        log(channel,logMsg, Constans.INFO);
     }
 
     public String format(String formatter, Object... obj) {
@@ -39,11 +39,13 @@ public class Logger {
     }
 
     public void info(String formatter, Object... obj) {
-        info(format(formatter, obj));
+        info(null,format(formatter, obj));
     }
-
+    public void info(String channel,String formatter,Object... obj) {
+        info(channel,format(formatter, obj));
+    }
     public void warn(String logMsg) {
-        log(logMsg, Constans.WARN);
+        log(null,logMsg, Constans.WARN);
     }
 
     public void warn(String formatter, Object... obj) {
@@ -51,7 +53,7 @@ public class Logger {
     }
 
     private void debug(String logMsg) {
-        log(logMsg, Constans.DEBUG);
+        log(null,logMsg, Constans.DEBUG);
     }
 
     public void debug(String formatter, Object... obj) {
@@ -59,7 +61,7 @@ public class Logger {
     }
 
     public void error(String logMsg) {
-        log(logMsg, Constans.ERROR);
+        log(null,logMsg, Constans.ERROR);
     }
 
     public void error(String formatter, Object... obj) {
@@ -110,8 +112,8 @@ public class Logger {
      * @date 2016/12/20 0020 16:35
      * 记录日志
      */
-    public void log(String logMsg, String logLevel) {
-        logProcessor.processor(logMsg, logLevel, clazz);
+    public void log(String channel,String logMsg, String logLevel) {
+        logProcessor.processor(channel,logMsg, logLevel, clazz);
     }
 
 }

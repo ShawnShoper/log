@@ -3,6 +3,7 @@ package com.daqsoft.log.util;
 import com.daqsoft.log.core.config.Constans;
 import com.daqsoft.log.core.serialize.Business;
 import com.daqsoft.log.core.serialize.Log;
+import com.daqsoft.log.util.annotation.Channel;
 import com.daqsoft.log.util.annotation.ContentType;
 import com.daqsoft.log.util.annotation.LogModel;
 import com.daqsoft.log.util.appender.Appender;
@@ -62,12 +63,12 @@ public class LogProcessor {
         }
     }
 
-    public void processor(final String logMsg, String logLevel, final Class<?> clazz) {
+    public void processor(String channel,final String logMsg, String logLevel, final Class<?> clazz) {
         StackTraceElement lastCall = getLastInvokStack(clazz);
-        assembly(logMsg, logLevel, clazz, lastCall);
+        assembly(channel,logMsg, logLevel, clazz, lastCall);
     }
 
-    private void assembly(final String logMsg, final String logLevel, final Class<?> clazz, final StackTraceElement lastCall) {
+    private void assembly(String channel,final String logMsg, final String logLevel, final Class<?> clazz, final StackTraceElement lastCall) {
         try {
             String methodName = lastCall.getMethodName();
             String className = lastCall.getClassName().toString();
@@ -82,6 +83,12 @@ public class LogProcessor {
                 ContentType ct = te.getAnnotation(ContentType.class);
                 if (Objects.nonNull(ct))
                     contentType = ct.value().name();
+                if(Objects.isNull(channel)) {
+                    Channel c = te.getAnnotation(Channel.class);
+                    if (Objects.nonNull(c))
+                        channel = c.value();
+                }
+
             } else {
                 LogModel classLogModel = clazz.getAnnotation(LogModel.class);
                 if (Objects.nonNull(classLogModel))
@@ -89,23 +96,18 @@ public class LogProcessor {
                 ContentType ct = clazz.getAnnotation(ContentType.class);
                 if (Objects.nonNull(ct))
                     contentType = ct.value().name();
-
+                if(Objects.isNull(channel)) {
+                    Channel c = clazz.getAnnotation(Channel.class);
+                    if (Objects.nonNull(c))
+                        channel = c.value();
+                }
             }
-
             LogProperties logConfig = LogFactory.getLogProperties();
-            Log log = new Log();
-            log.setTime(System.currentTimeMillis());
-            log.setContentType(contentType);
-            log.setApplication(logConfig.getApplication());
-            log.setLineNumber(lastCall.getLineNumber());
-            log.setMethodName(methodName);
-            log.setClassName(className);
-            log.setPid(pid);
             Business business = new Business();
             business.setModel(model);
             business.setContent(logMsg);
             business.setLevel(logLevel);
-            log.setBusiness(business);
+            Log log = new Log(channel,logConfig.getApplication(),System.currentTimeMillis(),contentType,logConfig.getHost(),logConfig.getPort(),pid,className,methodName,lastCall.getLineNumber(),business);
             LogQueue.logQueue.offer(log);
         } catch (Throwable e) {
             e.printStackTrace();

@@ -36,18 +36,18 @@ public class LogFactory {
 
     private static void init() {
         try {
-            logProperties = Yaml.loadType(LogProperties.class.getResourceAsStream("/log.yml"), LogProperties.class);
+            LogFactory.logProperties = Yaml.loadType(LogProperties.class.getResourceAsStream("/log.yml"), LogProperties.class);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        if (Objects.isNull(logProperties)) {
-            logProperties.setApplication(logProperties.getApplication());
-            logProperties.setHost(logProperties.getHost());
-            logProperties.setPort(logProperties.getPort());
-            logProperties.setPartten("%-23{yyyy-MM-dd HH:mm:ss.sss}t%-5l%6p%30mn%-5ln%cn%c");
-        }
+//        if (Objects.isNull(logProperties)) {
+//            logProperties.setApplication(logProperties.getApplication());
+//            logProperties.setHost(logProperties.getHost());
+//            logProperties.setPort(logProperties.getPort());
+//            logProperties.setPartten("%-23{yyyy-MM-dd HH:mm:ss.sss}t%-5l%6p%30mn%-5ln%cn%c");
+//        }
         List<LogPattern> logPatterns = new ArrayList<>();
-        String partten = logProperties.getPartten();
+        String partten = LogFactory.logProperties.getPartten();
         String[] log_partten = partten.split(PERCENT);
         Pattern reg_pattern = Pattern.compile("(-)?(\\d*?)(\\{.*?\\})?([a-z]+)", Pattern.CASE_INSENSITIVE);
         //遍历pattern

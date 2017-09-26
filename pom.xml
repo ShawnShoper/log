@@ -8,7 +8,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>log-api</module>
-        <module>log-util</module>
     </modules>
     <groupId>com.daqsoft.log</groupId>
     <version>0.0.3</version>

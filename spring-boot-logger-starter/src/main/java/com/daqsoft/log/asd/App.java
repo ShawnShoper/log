@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
  * Created by ShawnShoper on 2017/5/3.
  */
 @RestController
-@Channel("test1")
+@Channel("test")
 public class App {
     Logger logger = LogFactory.getLogger(App.class);
 

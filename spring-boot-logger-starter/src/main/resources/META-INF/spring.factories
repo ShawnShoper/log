@@ -1,4 +1,0 @@
-#org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-#com.daqsoft.log.LogConfig
-#org.springframework.context.ApplicationContextInitializer=\
-#com.daqsoft.log.LogConfigInitializer

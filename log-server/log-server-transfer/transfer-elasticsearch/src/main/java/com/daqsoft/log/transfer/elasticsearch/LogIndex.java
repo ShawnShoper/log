@@ -26,7 +26,8 @@ public class LogIndex {
     //日志内容格式
     private String contentType = Constans.TYPE_STRING;
     //来源地址 HOST:PORT
-    private String source;
+    private String host;
+    private int port;
     private int pid;
     private String className;
     private String methodName;
@@ -49,14 +50,21 @@ public class LogIndex {
         this.business = business;
     }
 
-    public String getSource() {
-        return source;
+    public String getHost() {
+        return host;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setHost(String host) {
+        this.host = host;
     }
 
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
 
     public String getApplication() {
         return application;
@@ -116,7 +124,8 @@ public class LogIndex {
         this.setLineNumber(log.getLineNumber());
         this.setMethodName(log.getMethodName());
         this.setPid(log.getPid());
-        this.setSource(log.getSource());
+        this.setHost(log.getHost());
+        this.setPort(log.getPort());
         this.setTime(new Date(log.getTime()));
     }
 

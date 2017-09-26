@@ -1,4 +1,9 @@
 #   日志记录工具
+V0.0.3<br>
+1.删除Logfactory中脑残的代码
+2.增加@ContentType,@Channel用来分别指定日志内容的内容,以及实时日志队列的Topic.
+3.去掉色彩日志输出.
+
 #版本变更<br>
 V0.0.21<br>
 1.提供日志级别配置
@@ -50,12 +55,16 @@ partten:  "%-23{yyyy-MM-dd HH:mm:ss.sss}t %5l %-5p --- [%15mn:%ln] %-41cn: %c"
         @Test
         //这里添加LogModel注解标识 当前方法是属于什么模块.Eg:用户模块
         @LogModel("测试demo")
+        //这里用来指定实时日志队列topic,放在方法上,那么这个方法所有的日志类型都会被输出到这个topic上
+        @Channel("Jikebao")
         public void log() throws InterruptedException {
             logger.info("测试info");
             logger.info("测试%s","info");
             logger.debug("测试debug");
             logger.debug("测试%s","debug");
             logger.error("测试error");
+            //如果需要单条输出到日志队列中,在info中指定.无法指定其他日志级别单条输出.
+            logger.info("Jikebao","测试日志队列");
             logger.error("测试%s","error");
             logger.warn("测试warn");
             logger.warn("测试%s","warn");

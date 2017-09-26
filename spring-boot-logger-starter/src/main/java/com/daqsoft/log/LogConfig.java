@@ -10,9 +10,9 @@ import org.springframework.core.annotation.Order;
 /**
  * Created by ShawnShoper on 2017/4/24.
  */
-@EnableConfigurationProperties(com.daqsoft.log.LogProperties.class)
-@Order(value = 0)
-@Configuration
+//@EnableConfigurationProperties(com.daqsoft.log.LogProperties.class)
+//@Order(value = 0)
+//@Configuration
 public class LogConfig  implements CommandLineRunner {
     @Autowired
     LogProperties logProperties;

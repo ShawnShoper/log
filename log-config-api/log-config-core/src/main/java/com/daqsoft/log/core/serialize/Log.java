@@ -4,6 +4,7 @@ import com.daqsoft.log.core.config.Constans;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.beans.Transient;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * 日志基本数据结构
  */
 public class Log implements Serializable {
+    private String channel;
     //日志来源
     private String application;
     //时间戳
@@ -19,12 +21,38 @@ public class Log implements Serializable {
     //日志内容格式
     private String contentType = Constans.TYPE_STRING;
     //来源地址 HOST:PORT
-    private String source;
+    private String host;
+    private int port;
     private int pid;
     private String className;
     private String methodName;
     private int lineNumber;
     private Business business;
+
+    @Transient
+    public String getChannel() {
+        return channel;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
 
     public Business getBusiness() {
         return business;
@@ -41,15 +69,6 @@ public class Log implements Serializable {
     public void setBusiness(Business business) {
         this.business = business;
     }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
 
     public String getApplication() {
         return application;
@@ -109,13 +128,36 @@ public class Log implements Serializable {
         return objectMapper.readValue(data, Log.class);
     }
 
+    public Log() {
+    }
+
+    public Log(String channel, String application, long time, String contentType, String host, int port, int pid, String className, String methodName, int lineNumber, Business business) {
+        this.channel = channel;
+        this.application = application;
+        this.time = time;
+        this.contentType = contentType;
+        this.pid = pid;
+        this.host = host;
+        this.port = port;
+        this.className = className;
+        this.methodName = methodName;
+        this.lineNumber = lineNumber;
+        this.business = business;
+    }
+
     @Override
     public String toString() {
         return "Log{" +
-                "application='" + application + '\'' +
+                "channel='" + channel + '\'' +
+                ", application='" + application + '\'' +
                 ", time=" + time +
                 ", contentType='" + contentType + '\'' +
-                ", source='" + source + '\'' +
+                ", host='" + host + '\'' +
+                ", port=" + port +
+                ", pid=" + pid +
+                ", className='" + className + '\'' +
+                ", methodName='" + methodName + '\'' +
+                ", lineNumber=" + lineNumber +
                 ", business=" + business +
                 '}';
     }

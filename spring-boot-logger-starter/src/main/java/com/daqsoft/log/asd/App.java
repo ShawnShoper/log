@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
  * Created by ShawnShoper on 2017/5/3.
  */
 @RestController
-@Channel("test")
+@Channel("test1")
 public class App {
     Logger logger = LogFactory.getLogger(App.class);
 
@@ -26,7 +26,7 @@ public class App {
     @RequestMapping("/sss")
     public String wordCount() {
         if (logger.isInfoEnable())
-            logger.info("jikebao", "asdadadaasd");
+            logger.info("asdadadaasd");
         return "hello world";
     }
 }

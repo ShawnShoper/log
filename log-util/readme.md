@@ -1,8 +1,8 @@
 #   日志记录工具
 V0.0.3<br>
-1.删除Logfactory中脑残的代码
-2.增加@ContentType,@Channel用来分别指定日志内容的内容,以及实时日志队列的Topic.
-3.去掉色彩日志输出.
+1.删除Logfactory中脑残的代码<br>
+2.增加@ContentType,@Channel用来分别指定日志内容的内容,以及实时日志队列的Topic.<br>
+3.去掉色彩日志输出.<br>
 
 #版本变更<br>
 V0.0.21<br>

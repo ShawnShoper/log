@@ -7,6 +7,7 @@ import com.daqsoft.log.core.serialize.Log;
 import com.daqsoft.log.util.config.KafkaProperties;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.exception.KafkaConnectionException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -59,22 +60,37 @@ public class KafkaAppender extends Appender {
         send(log);
     }
 
+    private AtomicBoolean over = new AtomicBoolean(true);
+
+    ObjectMapper mapper = new ObjectMapper();
+
     private void send(Log log) {
-        ObjectMapper mapper = new ObjectMapper();
+        over.compareAndSet(true, false);
         try {
             String json = mapper.writeValueAsString(log);
-            //Kafka key
-            if (available.get()) {
-                ProducerRecord<String, String> producerRecord = new ProducerRecord<>(Objects.isNull(log.getChannel())?this.topic:log.getChannel(),0, kid, json);
-                producer.send(producerRecord);
-                producer.flush();
-            }
+            try {
+                //Kafka key
+                if (available.get()) {
+                    ProducerRecord<String, String> producerRecord = new ProducerRecord<>(Objects.isNull(log.getChannel()) ? this.topic : log.getChannel(), 0, kid, json);
+                    producer.send(producerRecord);
+                    producer.flush();
+                }
 //            else failedQueue.add(log);
-        } catch (Exception e) {
-            e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
 //            failedQueue.add(log);
-            disConnect();
+                disConnect();
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } finally {
+            over.compareAndSet(false, true);
         }
+    }
+
+    @Override
+    public boolean canDestory() {
+        return over.get();
     }
 
     /**
@@ -102,6 +118,7 @@ public class KafkaAppender extends Appender {
 //            }
 //        }
     }
+
 
     /**
      * 初始化连接信息并创建连接失败处理以及重连机制

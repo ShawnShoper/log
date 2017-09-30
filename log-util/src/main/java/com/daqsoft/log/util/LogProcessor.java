@@ -1,6 +1,5 @@
 package com.daqsoft.log.util;
 
-import com.daqsoft.log.core.config.Constans;
 import com.daqsoft.log.core.serialize.Business;
 import com.daqsoft.log.core.serialize.Log;
 import com.daqsoft.log.util.annotation.Channel;
@@ -25,11 +24,35 @@ public class LogProcessor {
     private static int pid = Integer.valueOf(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
     private List<Appender> appenders = new ArrayList<>();
 
+    /**
+     * 关闭整个日志环境.
+     *
+     * @return
+     * @throws InterruptedException
+     */
+    protected synchronized void shutdown() throws InterruptedException {
+        for (; ; ) {
+            boolean canShutdown = false;
+            if (LogQueue.logQueue.isEmpty()) {
+                for (Appender appender : this.appenders) {
+                    boolean b = appender.canDestory();
+                    if (b) {
+                        canShutdown = true;
+                        break;
+                    }
+                }
+            }
+            if (canShutdown) return;
+            else
+                TimeUnit.MILLISECONDS.sleep(100);
+        }
+    }
+
     public LogProcessor(List<Appender> appenders) {
         this.appenders = appenders;
         new LogConsume().start();
+        //注册钩子,避免程序结束时,日志并未完全写完.
     }
-
 
     /**
      * 开启死循环一直监控日志队列
@@ -38,12 +61,12 @@ public class LogProcessor {
         public LogConsume() {
             this.setName("log-consume");
             this.setDaemon(true);
+            //初始化各个Appender
+            appenders.stream().forEach(Appender::init);
         }
 
         @Override
         public void run() {
-            //初始化各个Appender
-            appenders.stream().forEach(Appender::init);
             for (; !Thread.currentThread().isInterrupted(); ) {
                 try {
                     Log log = LogQueue.logQueue.poll(1, TimeUnit.SECONDS);
@@ -63,12 +86,31 @@ public class LogProcessor {
         }
     }
 
-    public void processor(String channel,final String logMsg, String logLevel, final Class<?> clazz) {
+    /**
+     * 进行日志详细的记录加工
+     * @param channel   消息队列topic
+     * @param logInfo   日志信息
+     * @param logLevel  日志级别
+     * @param clazz     日志记录所在类
+     */
+    public void processor(String channel, final LogInfo logInfo, String logLevel, final Class<?> clazz) {
         StackTraceElement lastCall = getLastInvokStack(clazz);
-        assembly(channel,logMsg, logLevel, clazz, lastCall);
+        Log log = assembly(channel, logInfo, logLevel, clazz, lastCall);
+        if (Objects.nonNull(log))
+            LogQueue.logQueue.offer(log);
     }
 
-    private void assembly(String channel,final String logMsg, final String logLevel, final Class<?> clazz, final StackTraceElement lastCall) {
+    /**
+     * 装配日志内容.
+     * @param channel   消息队列topic
+     * @param logInfo   日志信息
+     * @param logLevel  日志级别
+     * @param clazz     日志记录所在类
+     * @param lastCall  最后调用栈信息
+     * @return
+     */
+    private Log assembly(String channel, final LogInfo logInfo, final String logLevel, final Class<?> clazz, final StackTraceElement lastCall) {
+        Log log = null;
         try {
             String methodName = lastCall.getMethodName();
             String className = lastCall.getClassName().toString();
@@ -83,12 +125,11 @@ public class LogProcessor {
                 ContentType ct = te.getAnnotation(ContentType.class);
                 if (Objects.nonNull(ct))
                     contentType = ct.value().name();
-                if(Objects.isNull(channel)) {
+                if (Objects.isNull(channel)) {
                     Channel c = te.getAnnotation(Channel.class);
                     if (Objects.nonNull(c))
                         channel = c.value();
                 }
-
             } else {
                 LogModel classLogModel = clazz.getAnnotation(LogModel.class);
                 if (Objects.nonNull(classLogModel))
@@ -96,7 +137,7 @@ public class LogProcessor {
                 ContentType ct = clazz.getAnnotation(ContentType.class);
                 if (Objects.nonNull(ct))
                     contentType = ct.value().name();
-                if(Objects.isNull(channel)) {
+                if (Objects.isNull(channel)) {
                     Channel c = clazz.getAnnotation(Channel.class);
                     if (Objects.nonNull(c))
                         channel = c.value();
@@ -105,15 +146,23 @@ public class LogProcessor {
             LogProperties logConfig = LogFactory.getLogProperties();
             Business business = new Business();
             business.setModel(model);
+            Throwable throwable = logInfo.getThrowable();
+            String logMsg = logInfo.getMsg();
+            if (Objects.nonNull(throwable)) {
+                //TODO reset the throwable
+                InnerPrintStream printStream = new InnerPrintStream(new InnerOutPutStream());
+                throwable.printStackTrace(printStream);
+                printStream.close();
+                logMsg += "\n" + printStream.getMessage();
+            }
             business.setContent(logMsg);
             business.setLevel(logLevel);
-            Log log = new Log(channel,logConfig.getApplication(),System.currentTimeMillis(),contentType,logConfig.getHost(),logConfig.getPort(),pid,className,methodName,lastCall.getLineNumber(),business);
-            LogQueue.logQueue.offer(log);
+            log = new Log(channel, logConfig.getApplication(), System.currentTimeMillis(), contentType, logConfig.getHost(), logConfig.getPort(), pid, className, methodName, lastCall.getLineNumber(), business);
         } catch (Throwable e) {
             e.printStackTrace();
         }
+        return log;
     }
-
     //LogUtil类方法
 //    final List<String> localMethodName = Arrays.stream(Logger.class.getDeclaredMethods()).filter(m -> m.getDeclaringClass().getName().equals(Logger.class.getName())).map(e -> this.getClass().getName() + "." + e.getName()).collect(Collectors.toList());
 

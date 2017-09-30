@@ -19,4 +19,6 @@ public abstract class Appender {
     public abstract void write(Log log) throws IOException;
 
     public abstract void destroy();
+
+    public abstract boolean canDestory();
 }

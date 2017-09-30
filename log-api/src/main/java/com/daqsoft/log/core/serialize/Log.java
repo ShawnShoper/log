@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 public class Log implements Serializable {
     private String channel;
-    //日志来源
+    //日志
     private String application;
     //时间戳
     private long time;

@@ -9,6 +9,7 @@ import com.daqsoft.log.util.constans.Tag;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by ShawnShoper on 2017/4/19.
@@ -105,22 +106,39 @@ public class ConsoleAppender extends Appender {
         return String.format(PERCENT + (' ' == neg ? "" : neg) + (offset == 0 ? "" : offset) + "s", origin);
     }
 
+    private AtomicBoolean over = new AtomicBoolean(true);
+
     public void write(Log log) throws IOException {
-        Map<String, String> prepare = prepare(log);
-        String partten = logProperties.getPartten();
-        String out = partten;
-        for (String k : prepare.keySet()) {
-            String s = prepare.get(k);
-            out = out.replace(k, s);
+        over.compareAndSet(true, false);
+        try {
+            Map<String, String> prepare = prepare(log);
+            String partten = logProperties.getPartten();
+            String out = partten;
+            for (String k : prepare.keySet()) {
+                String s = prepare.get(k);
+                out = out.replace(k, s);
+            }
+            print.write(out.getBytes());
+            print.write("\r\n".getBytes());
+            print.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            over.compareAndSet(false, true);
         }
-        print.write(out.getBytes());
-        print.write("\r\n".getBytes());
-        print.flush();
+
+
+    }
+
+    @Override
+    public boolean canDestory() {
+        return over.get();
     }
 
     @Override
     public void destroy() {
         if (Objects.isNull(print))
             print.close();
+
     }
 }

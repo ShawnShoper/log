@@ -89,9 +89,13 @@ public class LogFactory {
 
         }
         logProcessor = new LogProcessor(appenders);
-        //registry hock
+        //程序结束时,避免还有余量的任务未持久化.
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            appenders.forEach(Appender::destroy);
+            try {
+                logProcessor.shutdown();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }));
     }
 

@@ -5,6 +5,8 @@ import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.constans.LogLevel;
 
 import javax.annotation.PreDestroy;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Logger {
     private Class<?> clazz;
@@ -30,38 +32,52 @@ public class Logger {
     public void destroy() {
     }
 
-    public void info(String channel,String logMsg) {
-        log(channel,logMsg, Constans.INFO);
+    public void info(String channel, LogInfo logMsg) {
+        log(channel, logMsg, Constans.INFO);
     }
 
-    public String format(String formatter, Object... obj) {
-        return String.format(formatter, obj);
+    public LogInfo format(String formatter, Object... obj) {
+        LogInfo logInfo = new LogInfo();
+        if (Objects.nonNull(obj) && obj.length > 0) {
+            Object[] ts = null;
+            if (obj[obj.length - 1] instanceof Throwable) {
+                ts = Arrays.copyOf(obj, obj.length - 1, Object[].class);
+                logInfo.setThrowable((Throwable) obj[obj.length - 1]);
+            }
+            logInfo.setMsg(String.format(formatter, Objects.nonNull(ts) ? ts : obj));
+        } else {
+            logInfo.setMsg(formatter);
+        }
+
+        return logInfo;
     }
 
     public void info(String formatter, Object... obj) {
-        info(null,format(formatter, obj));
+        info(null, format(formatter, obj));
     }
-    public void info(String channel,String formatter,Object... obj) {
-        info(channel,format(formatter, obj));
+
+    public void info(String channel, String formatter, Object... obj) {
+        info(channel, format(formatter, obj));
     }
-    public void warn(String logMsg) {
-        log(null,logMsg, Constans.WARN);
+
+    public void warn(LogInfo logMsg) {
+        log(null, logMsg, Constans.WARN);
     }
 
     public void warn(String formatter, Object... obj) {
         warn(format(formatter, obj));
     }
 
-    private void debug(String logMsg) {
-        log(null,logMsg, Constans.DEBUG);
+    private void debug(LogInfo logMsg) {
+        log(null, logMsg, Constans.DEBUG);
     }
 
     public void debug(String formatter, Object... obj) {
         debug(format(formatter, obj));
     }
 
-    public void error(String logMsg) {
-        log(null,logMsg, Constans.ERROR);
+    public void error(LogInfo logMsg) {
+        log(null, logMsg, Constans.ERROR);
     }
 
     public void error(String formatter, Object... obj) {
@@ -112,8 +128,8 @@ public class Logger {
      * @date 2016/12/20 0020 16:35
      * 记录日志
      */
-    public void log(String channel,String logMsg, String logLevel) {
-        logProcessor.processor(channel,logMsg, logLevel, clazz);
+    public void log(String channel, LogInfo logMsg, String logLevel) {
+        logProcessor.processor(channel, logMsg, logLevel, clazz);
     }
 
 }

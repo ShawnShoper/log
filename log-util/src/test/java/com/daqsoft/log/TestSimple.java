@@ -1,5 +1,7 @@
-package com.daqsoft.log.util;
+package com.daqsoft.log;
 
+import com.daqsoft.log.util.LogFactory;
+import com.daqsoft.log.util.Logger;
 import com.daqsoft.log.util.annotation.LogModel;
 import com.daqsoft.log.util.config.LogProperties;
 
@@ -9,12 +11,12 @@ import java.util.concurrent.TimeUnit;
  * Created by ShawnShoper on 2017/4/17.
  */
 @LogModel("测试class")
-public class Test {
-    private static Logger logger = LogFactory.getLogger(Test.class);
+public class TestSimple {
+    private static Logger logger = LogFactory.getLogger(TestSimple.class);
 
     // static org.slf4j.Logger logger = LoggerFactory.getLogger(Test.class);
     public static void main(String[] args) {
-//        logger.info("asd");
+//      logger.info("asd");
         LogProperties logProperties = new LogProperties();
         logProperties.setApplication("测试");
         logProperties.setHost("127.0.0.1");
@@ -22,7 +24,7 @@ public class Test {
         logProperties.setPartten("%-5{yyyy-MM-dd HH:mm:ss.ssss}t %-5l %6p %30mn %5ln %5cn %5c");
         LogFactory.setLogConfig(logProperties);
 //      logger.info("测试t111e");
-        new Test().te();
+        new TestSimple().te();
     }
 
     @LogModel("测试method")

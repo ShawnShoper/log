@@ -13,6 +13,7 @@ import com.daqsoft.log.util.constans.FileCap;
 import java.io.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,10 +67,6 @@ public class FileAppender extends Appender {
     }
 
 
-    class FileWriter {
-
-    }
-
     /**
      * 检查输出流是否需要重定向
      *
@@ -106,12 +103,26 @@ public class FileAppender extends Appender {
         return change;
     }
 
+    private AtomicBoolean over = new AtomicBoolean(true);
+
+    @Override
+    public boolean canDestory() {
+        return over.get();
+    }
+
     @Override
     public void write(Log log) throws IOException {
-        byte[] data = parseLog(log).getBytes();
-        plantOutputStream(data.length);
-        outputStream.write(data);
-        outputStream.flush();
+        over.compareAndSet(true, false);
+        try {
+            byte[] data = parseLog(log).getBytes();
+            plantOutputStream(data.length);
+            outputStream.write(data);
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            over.compareAndSet(false, true);
+        }
     }
 
     @Override
@@ -133,7 +144,7 @@ public class FileAppender extends Appender {
                 .append(log.getMethodName()).append(Constans.PLACEHOLDER)
                 .append(log.getPid()).append(Constans.PLACEHOLDER)
                 .append(logProperties.getHost()).append(Constans.PLACEHOLDER)
-                .append( logProperties.getPort()).append(Constans.PLACEHOLDER)
+                .append(logProperties.getPort()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getVia()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getLevel()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getModel()).append(Constans.PLACEHOLDER)

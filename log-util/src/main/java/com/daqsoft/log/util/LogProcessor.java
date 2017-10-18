@@ -1,5 +1,6 @@
 package com.daqsoft.log.util;
 
+import com.daqsoft.log.core.config.Constans;
 import com.daqsoft.log.core.serialize.Business;
 import com.daqsoft.log.core.serialize.Log;
 import com.daqsoft.log.util.annotation.Channel;
@@ -14,6 +15,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by ShawnShoper on 2017/4/18.
@@ -33,7 +36,7 @@ public class LogProcessor {
     protected synchronized void shutdown() throws InterruptedException {
         for (; ; ) {
             boolean canShutdown = false;
-            if (LogQueue.logQueue.isEmpty()) {
+            if (remain.get() == 0 && LogQueue.logQueue.isEmpty()) {
                 for (Appender appender : this.appenders) {
                     boolean b = appender.canDestory();
                     if (b) {
@@ -42,9 +45,10 @@ public class LogProcessor {
                     }
                 }
             }
-            if (canShutdown) return;
-            else
-                TimeUnit.MILLISECONDS.sleep(100);
+            if (canShutdown) {
+                return;
+            } else
+                TimeUnit.MILLISECONDS.sleep(10);
         }
     }
 
@@ -53,6 +57,8 @@ public class LogProcessor {
         new LogConsume().start();
         //注册钩子,避免程序结束时,日志并未完全写完.
     }
+
+    AtomicInteger remain = new AtomicInteger(0);
 
     /**
      * 开启死循环一直监控日志队列
@@ -78,6 +84,7 @@ public class LogProcessor {
                                 excep.printStackTrace();
                             }
                         });
+                        remain.decrementAndGet();
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -88,25 +95,29 @@ public class LogProcessor {
 
     /**
      * 进行日志详细的记录加工
-     * @param channel   消息队列topic
-     * @param logInfo   日志信息
-     * @param logLevel  日志级别
-     * @param clazz     日志记录所在类
+     *
+     * @param channel  消息队列topic
+     * @param logInfo  日志信息
+     * @param logLevel 日志级别
+     * @param clazz    日志记录所在类
      */
     public void processor(String channel, final LogInfo logInfo, String logLevel, final Class<?> clazz) {
         StackTraceElement lastCall = getLastInvokStack(clazz);
         Log log = assembly(channel, logInfo, logLevel, clazz, lastCall);
-        if (Objects.nonNull(log))
+        if (Objects.nonNull(log)) {
             LogQueue.logQueue.offer(log);
+            remain.incrementAndGet();
+        }
     }
 
     /**
      * 装配日志内容.
-     * @param channel   消息队列topic
-     * @param logInfo   日志信息
-     * @param logLevel  日志级别
-     * @param clazz     日志记录所在类
-     * @param lastCall  最后调用栈信息
+     *
+     * @param channel  消息队列topic
+     * @param logInfo  日志信息
+     * @param logLevel 日志级别
+     * @param clazz    日志记录所在类
+     * @param lastCall 最后调用栈信息
      * @return
      */
     private Log assembly(String channel, final LogInfo logInfo, final String logLevel, final Class<?> clazz, final StackTraceElement lastCall) {
@@ -153,7 +164,7 @@ public class LogProcessor {
                 InnerPrintStream printStream = new InnerPrintStream(new InnerOutPutStream());
                 throwable.printStackTrace(printStream);
                 printStream.close();
-                logMsg += "\n" + printStream.getMessage();
+                logMsg += Constans.NEWLINE + printStream.getMessage();
             }
             business.setContent(logMsg);
             business.setLevel(logLevel);

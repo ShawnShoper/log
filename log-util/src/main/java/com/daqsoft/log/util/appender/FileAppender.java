@@ -9,6 +9,7 @@ import com.daqsoft.log.util.config.FileProperties;
 import com.daqsoft.log.util.config.LogPattern;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.constans.FileCap;
+import scala.collection.immutable.Stream;
 
 import java.io.*;
 import java.util.List;
@@ -22,18 +23,21 @@ import java.util.regex.Pattern;
  * 输出日志到File
  */
 public class FileAppender extends Appender {
-    private static String majorVersion = "1";
+    //文件配置
     FileProperties fileProperties;
+    //输出流
     private OutputStream outputStream;
+    //时间切割
     String rollingPattern;
+    //日志文件名
     String fileName;
+    //日志存放路径
     String fileDir;
     int rolling;
     int fileSize;
     int maxFileSize;
     int segmentCount;
     List<LogPattern> logPatterns;
-    public final static String PERCENT = "%";
 
     public FileAppender(final LogProperties logProperties, final List<LogPattern> logPatterns) {
         super(logProperties);
@@ -114,7 +118,7 @@ public class FileAppender extends Appender {
     public void write(Log log) throws IOException {
         over.compareAndSet(true, false);
         try {
-            byte[] data = parseLog(log).getBytes();
+            byte[] data = parseLog(log,logProperties).getBytes();
             plantOutputStream(data.length);
             outputStream.write(data);
             outputStream.flush();
@@ -135,65 +139,60 @@ public class FileAppender extends Appender {
             }
     }
 
-    protected String parseLog(Log log) {
+    /**
+     * 把对应的log实体序列化为相应的字符串
+     *
+     * @param log
+     * @return
+     */
+    protected static String parseLog(Log log,LogProperties logProperties) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(log.getTime()).append(Constans.PLACEHOLDER)
+        stringBuilder.append(Constans.MAJORVERSION).append(Constans.PLACEHOLDER)
+                .append(log.getTime()).append(Constans.PLACEHOLDER)
                 .append(log.getApplication()).append(Constans.PLACEHOLDER)
                 .append(log.getClassName()).append(Constans.PLACEHOLDER)
                 .append(log.getLineNumber()).append(Constans.PLACEHOLDER)
                 .append(log.getMethodName()).append(Constans.PLACEHOLDER)
+                .append(log.getContentType()).append(Constans.PLACEHOLDER)
                 .append(log.getPid()).append(Constans.PLACEHOLDER)
                 .append(logProperties.getHost()).append(Constans.PLACEHOLDER)
                 .append(logProperties.getPort()).append(Constans.PLACEHOLDER)
+                .append(log.getChannel()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getVia()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getLevel()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getModel()).append(Constans.PLACEHOLDER)
-                .append(log.getBusiness().getContent()).append(Constans.PLACEHOLDER)
-                .append(majorVersion)
-                .append(Constans.OVER);
-//        logPatterns.stream().map(e -> {
-//            String name = e.getName();
-//            String tmp = null;
-//            if (Tag.T.name.equals(name)) {
-//                String time = DateUtil.dateToString(e.getPattern(), new Date(log.getTime()));
-//                tmp = time;
-//            } else if (Tag.C.name.equals(name)) {
-//                tmp = log.getBusiness().getContent();
-//            } else if (Tag.L.name.equals(name)) {
-//                String tag_name = log.getBusiness().getLevel();
-//                tmp = tag_name;
-//            } else if (Tag.P.name.equals(name)) {
-//                tmp = String.valueOf(log.getPid());
-//            } else if (Tag.MN.name.equals(name)) {
-//                tmp = String.valueOf(log.getMethodName());
-//            } else if (Tag.LN.name.equals(name)) {
-//                tmp = String.valueOf(log.getLineNumber());
-//            } else if (Tag.CN.name.equals(name)) {
-//                tmp = String.valueOf(log.getClassName());
-//            }
-//            return tmp + "\001";
-//        }).filter(Objects::nonNull).forEach(stringBuilder::append);
+                .append(log.getBusiness().getContent().replace(Constans.NEWLINE, Constans.PLACEHOLDER2))
+                .append(Constans.PLACEHOLDER);
         stringBuilder.setLength(stringBuilder.length() - 1);
-        return stringBuilder.toString() + "\r\n";
+        return stringBuilder.toString() + Constans.NEWLINE;
     }
 
+    /**
+     * 解析log字符串,生成对应的Log实体
+     *
+     * @param logStr
+     * @return
+     */
     public static Log UnParseLog(String logStr) {
         String[] logs = logStr.split(Constans.PLACEHOLDER);
         Log log = new Log();
-        log.setTime(Objects.nonNull(logs[0]) ? Integer.valueOf(logs[0]) : 0);
-        log.setApplication(logs[1]);
-        log.setClassName(logs[2]);
-        log.setLineNumber(Objects.nonNull(logs[3]) ? Integer.valueOf(logs[3]) : 0);
-        log.setMethodName(logs[3]);
-        log.setPid(StringUtil.isEmpty(logs[4]) ? 0 : Integer.valueOf(logs[4]));
-        log.setHost(logs[5]);
-        log.setPort(Integer.valueOf(logs[6]));
-        Business business = new Business();
-        business.setVia(logs[6]);
-        business.setLevel(logs[7]);
-        business.setModel(logs[8]);
-        business.setContent(logs[9]);
-        log.setBusiness(business);
+        if(Constans.MAJORVERSION.equals(logs[0])) {
+            log.setTime(Objects.nonNull(logs[1]) ? Long.valueOf(logs[1]) : 0);
+            log.setApplication(logs[2]);
+            log.setClassName(logs[3]);
+            log.setLineNumber(Objects.nonNull(logs[4]) ? Integer.valueOf(logs[4]) : 0);
+            log.setMethodName(logs[5]);
+            log.setContentType(logs[6]);
+            log.setPid(StringUtil.isEmpty(logs[7]) ? 0 : Integer.valueOf(logs[7]));
+            log.setHost(logs[8]);
+            log.setPort(Integer.valueOf(logs[9]));
+            Business business = new Business();
+            business.setVia(logs[10]);
+            business.setLevel(logs[11]);
+            business.setModel(logs[12]);
+            business.setContent(logs[13]);
+            log.setBusiness(business);
+        }
         return log;
     }
 }

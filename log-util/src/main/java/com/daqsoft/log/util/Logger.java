@@ -11,14 +11,6 @@ import java.util.Objects;
 public class Logger {
     private Class<?> clazz;
     private LogProcessor logProcessor;
-//
-//    public Class<?> getClazz() {
-//        return clazz;
-//    }
-//
-//    public void setClazz(Class<?> clazz) {
-//        this.clazz = clazz;
-//    }
 
     public Logger(Class<?> clazz, final LogProcessor logProcessor, LogProperties logProperties) {
         this.clazz = clazz;

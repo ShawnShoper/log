@@ -1,6 +1,7 @@
 package com.daqsoft.log.util;
 
 import com.daqsoft.commons.core.StringUtil;
+import com.daqsoft.log.core.config.Constans;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,6 +27,6 @@ public class InnerOutPutStream extends OutputStream {
     public void write(byte[] b, int off, int len) throws IOException {
         String m = new String(b, off, len);
         if (StringUtil.nonEmpty(m))
-            message.append(m + "\n");
+            message.append(m + Constans.NEWLINE);
     }
 }

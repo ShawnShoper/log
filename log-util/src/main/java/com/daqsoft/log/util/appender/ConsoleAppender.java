@@ -1,6 +1,7 @@
 package com.daqsoft.log.util.appender;
 
 import com.daqsoft.commons.core.DateUtil;
+import com.daqsoft.log.core.config.Constans;
 import com.daqsoft.log.core.serialize.Log;
 import com.daqsoft.log.util.config.LogPattern;
 import com.daqsoft.log.util.config.LogProperties;
@@ -18,10 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ConsoleAppender extends Appender {
     PrintStream print = System.out;
     List<LogPattern> logPatterns;
-    private final static String PERCENT = "%";
-    private final static String SPACE = " ";
-    private final static String EMPTY = "";
-    private final static String DASH = "-";
+
 
     public ConsoleAppender(LogProperties logProperties, List<LogPattern> logPatterns) {
         super(logProperties);
@@ -44,7 +42,7 @@ public class ConsoleAppender extends Appender {
         if (!logPatterns.isEmpty())
             logPatterns.stream().forEach(e -> {
                 String name = e.getName();
-                String tmp = EMPTY;
+                String tmp = Constans.EMPTY;
                 if (Tag.T.name.equals(name)) {
                     String time = DateUtil.dateToString(e.getPattern(), new Date(log.getTime()));
                     tmp = time;
@@ -60,9 +58,9 @@ public class ConsoleAppender extends Appender {
                     if (tmp.length() < 5) {
                         int length = tmp.length();
                         int i = Tag.L.offset - length;
-                        String m = EMPTY;
+                        String m = Constans.EMPTY;
                         for (int k = 0; k < i; k++)
-                            m += SPACE;
+                            m += Constans.SPACE;
                         tmp = m + tmp;
                     }
                     tmp = format(tmp, e.getOffset(), e.getNeg());
@@ -78,7 +76,7 @@ public class ConsoleAppender extends Appender {
                     if ((e.getOffset() - ln.length() - 1) < tmp.length()) {
                         tmp = tmp.substring(0, e.getOffset() - ln.length() - 3 - 1) + "...";
                     }
-                    tmp += DASH + ln;
+                    tmp += Constans.DASH + ln;
                     tmp = format(tmp, e.getOffset(), e.getNeg());
 //                    tmp = String.format(PERCENT + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset()) + "s", tmp);
 //                } else if (Tag.LN.name.equals(name)) {
@@ -97,13 +95,13 @@ public class ConsoleAppender extends Appender {
                     tmp = format(tmp, e.getOffset(), e.getNeg());
 //                    tmp = String.format(PERCENT + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset() + 11) + "s", tmp);
                 }
-                tag_value.put(PERCENT + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset()) + (Objects.nonNull(e.getPattern()) ? "{" + e.getPattern() + "}" : "") + e.getName(), tmp);
+                tag_value.put(Constans.PERCENT + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset()) + (Objects.nonNull(e.getPattern()) ? "{" + e.getPattern() + "}" : "") + e.getName(), tmp);
             });
         return tag_value;
     }
 
     private String format(String origin, int offset, char neg) {
-        return String.format(PERCENT + (' ' == neg ? "" : neg) + (offset == 0 ? "" : offset) + "s", origin);
+        return String.format(Constans.PERCENT + (' ' == neg ? "" : neg) + (offset == 0 ? "" : offset) + "s", origin);
     }
 
     private AtomicBoolean over = new AtomicBoolean(true);
@@ -119,7 +117,7 @@ public class ConsoleAppender extends Appender {
                 out = out.replace(k, s);
             }
             print.write(out.getBytes());
-            print.write("\r\n".getBytes());
+            print.write(Constans.NEWLINE.getBytes());
             print.flush();
         } catch (IOException e) {
             e.printStackTrace();

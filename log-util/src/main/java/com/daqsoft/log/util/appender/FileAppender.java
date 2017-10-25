@@ -89,10 +89,10 @@ public class FileAppender extends Appender {
         }
         if (Objects.nonNull(outputStream))
             //文件长度将超过或达到设置上限.分割日志文件
-            if (maxFileSize > 0 && (fileSize + size > maxFileSize)) {
-                segmentCount++;
+            if (maxFileSize > 0 && ((fileSize + size) > maxFileSize)) {
                 change = true;
             }
+
         if (change) {
             try {
                 if (Objects.nonNull(outputStream)) {
@@ -101,8 +101,18 @@ public class FileAppender extends Appender {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                fileSize = size;
+                File file;
+                do {
+                    ++segmentCount;
+                    file = new File(fileDir + File.separator + fileName + (StringUtil.nonEmpty(String.valueOf(pattern)) ? "-" + pattern : "") + (segmentCount > 0 ? "-" + segmentCount : ""));
+                } while (file.exists());
+                outputStream = new FileOutputStream(file, true);
+
             }
-            outputStream = new FileOutputStream(new File(fileDir + File.separator + fileName + (StringUtil.nonEmpty(String.valueOf(pattern)) ? "-" + pattern : "") + (segmentCount > 0 ? "-" + segmentCount : "")), true);
+        } else {
+            fileSize += size;
         }
         return change;
     }
@@ -118,7 +128,7 @@ public class FileAppender extends Appender {
     public void write(Log log) throws IOException {
         over.compareAndSet(true, false);
         try {
-            byte[] data = parseLog(log,logProperties).getBytes();
+            byte[] data = parseLog(log, logProperties).getBytes();
             plantOutputStream(data.length);
             outputStream.write(data);
             outputStream.flush();
@@ -145,7 +155,7 @@ public class FileAppender extends Appender {
      * @param log
      * @return
      */
-    protected static String parseLog(Log log,LogProperties logProperties) {
+    protected static String parseLog(Log log, LogProperties logProperties) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(Constans.MAJORVERSION).append(Constans.PLACEHOLDER)
                 .append(log.getTime()).append(Constans.PLACEHOLDER)
@@ -176,7 +186,7 @@ public class FileAppender extends Appender {
     public static Log UnParseLog(String logStr) {
         String[] logs = logStr.split(Constans.PLACEHOLDER);
         Log log = new Log();
-        if(Constans.MAJORVERSION.equals(logs[0])) {
+        if (Constans.MAJORVERSION.equals(logs[0])) {
             log.setTime(Objects.nonNull(logs[1]) ? Long.valueOf(logs[1]) : 0);
             log.setApplication(logs[2]);
             log.setClassName(logs[3]);

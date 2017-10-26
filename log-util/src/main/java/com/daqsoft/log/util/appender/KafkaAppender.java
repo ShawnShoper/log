@@ -132,7 +132,7 @@ public class KafkaAppender extends Appender {
     public void destroy() {
         if (Objects.nonNull(producer)) {
             try {
-                producer.close();
+                disConnect();
             } catch (Throwable ex) {
                 ex.printStackTrace();
             } finally {
@@ -426,8 +426,8 @@ public class KafkaAppender extends Appender {
             File file;
             do {
                 ++segmentCount;
-                fileName = File.separator + fileName + (StringUtil.nonEmpty(String.valueOf(pattern)) ? "-" + pattern : "") + (segmentCount > 0 ? "-" + segmentCount : "");
-                file = new File(fileDir + fileName);
+                String fn = fileName + (StringUtil.nonEmpty(String.valueOf(pattern)) ? "-" + pattern : "") + (segmentCount > 0 ? "-" + segmentCount : "");
+                file = new File(fileDir + File.separator + fn);
             } while (file.exists());
             backupOutputWrite = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
         } else {

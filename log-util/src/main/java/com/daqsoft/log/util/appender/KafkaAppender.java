@@ -106,8 +106,8 @@ public class KafkaAppender extends Appender {
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-        }finally {
-            over.compareAndSet(true,false);
+        } finally {
+            over.compareAndSet(false, true);
         }
     }
 
@@ -164,11 +164,12 @@ public class KafkaAppender extends Appender {
         if (Objects.nonNull(fileProperties.getRolling())) {
             rollingPattern = fileProperties.getRolling().getPattern();
         }
-        try {
-            plantOutputStream(0);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        //去掉初始化数据流...
+//        try {
+//            plantOutputStream(0);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
         //清理之前的文件
         revertLogToMQ();
         if (StringUtil.nonEmpty(fileProperties.getFileSize())) {
@@ -220,10 +221,6 @@ public class KafkaAppender extends Appender {
         reconnect.start();
     }
 
-    public static void main(String[] args) {
-        File file = new File("D:\\test\\kafka\\log.log-2017-10-18-10");
-        file.delete();
-    }
 
     private void revertLogToMQ() {
         File file = new File(fileDir);
@@ -401,7 +398,6 @@ public class KafkaAppender extends Appender {
         if (Objects.nonNull(backupOutputWrite))
             //文件长度将超过或达到设置上限.分割日志文件
             if (maxFileSize > 0 && (fileSize + size > maxFileSize)) {
-                segmentCount++;
                 change = true;
             }
         if (change) {
@@ -413,8 +409,18 @@ public class KafkaAppender extends Appender {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            fileName = File.separator + fileName + (StringUtil.nonEmpty(String.valueOf(pattern)) ? "-" + pattern : "") + (segmentCount > 0 ? "-" + segmentCount : "");
-            backupOutputWrite = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(fileDir + fileName), true)));
+            fileSize = size;
+            File file;
+            do {
+                ++segmentCount;
+                fileName = File.separator + fileName + (StringUtil.nonEmpty(String.valueOf(pattern)) ? "-" + pattern : "") + (segmentCount > 0 ? "-" + segmentCount : "");
+                file = new File(fileDir + fileName);
+            } while (file.exists());
+            backupOutputWrite = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
+        } else {
+            fileSize += size;
+            if (Objects.isNull(backupOutputWrite))
+                backupOutputWrite = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(fileDir + fileName), true)));
         }
         return change;
     }

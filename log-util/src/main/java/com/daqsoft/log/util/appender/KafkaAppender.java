@@ -85,20 +85,28 @@ public class KafkaAppender extends Appender {
         try {
             String json = mapper.writeValueAsString(log);
             try {
+                boolean before = available.get();
 //                producer.
                 //Kafka key
-                if (available.get()) {
-                    ProducerRecord<String, String> producerRecord = new ProducerRecord<>(Objects.isNull(log.getChannel()) ? this.topic : log.getChannel(), 0, kid, json);
-                    producer.send(producerRecord, (metadata, exception) -> {
-                        if (Objects.nonNull(exception)) {
-                            failedQueue.add(log);
-                            available.compareAndSet(true, false);
+//                if (available.get()) {
+                ProducerRecord<String, String> producerRecord = new ProducerRecord<>(Objects.isNull(log.getChannel()) ? this.topic : log.getChannel(), 0, kid, json);
+                producer.send(producerRecord, (metadata, exception) -> {
+                    if (!before && available.get()) {
+                        //如果之前是链接失败的,现在成功链接后,进行消息回写
+                        revertLogToMQ();
+                    }
+                    if (Objects.nonNull(exception)) {
+                        failedQueue.add(log);
+                        available.compareAndSet(true, false);
 //                            disConnect();
-                        }
-                    });
-                    producer.flush();
+                    }
+                });
+                //重启kafka后,这里无法进行flush导致系统停顿卡死.
+                producer.flush();
 //                    available.compareAndSet(false, true);
-                }
+//                } else {
+//                    failedQueue.offer(log);
+//                }
             } catch (Exception e) {
                 e.printStackTrace();
                 available.compareAndSet(true, false);
@@ -154,7 +162,7 @@ public class KafkaAppender extends Appender {
         //TODO 先注释掉一下模块,错误日志备份策略先走FileAppender
         registyFailedHandle();
         //程序启动后连接不健康失败情况下,检测kafka终端是否健康,并重新创建连接
-        registryConnectionChecker();
+//        registryConnectionChecker();
 
         fileName = fileProperties.getFileName();
         fileDir = this.kafka.getKafkaBackDir();
@@ -195,6 +203,7 @@ public class KafkaAppender extends Appender {
             for (; !Thread.currentThread().isInterrupted(); ) {
                 try {
                     boolean before = available.get();
+
                     //检查连接是否通畅
                     ProducerRecord<String, String> producerRecord = new ProducerRecord<>(String.valueOf(config.get("checker_topic")), 0, "", "ping");
                     producer.send(producerRecord, (metadata, exception) -> {
@@ -203,11 +212,14 @@ public class KafkaAppender extends Appender {
                             if (!before && available.get()) {
                                 //如果之前是链接失败的,现在成功链接后,进行消息回写
                                 revertLogToMQ();
+                            } else {
+                                initConnect();
                             }
                         } else {
                             available.compareAndSet(true, false);
                         }
                     });
+                    producer.flush();
                     TimeUnit.SECONDS.sleep(5);
                 } catch (Exception e) {
                     if (e instanceof InterruptedException)
@@ -218,7 +230,7 @@ public class KafkaAppender extends Appender {
         });
         reconnect.setDaemon(true);
         reconnect.setName("log-kafka-appender-reconnect");
-        reconnect.start();
+//        reconnect.start();
     }
 
 
@@ -282,41 +294,41 @@ public class KafkaAppender extends Appender {
             for (; !Thread.currentThread().isInterrupted(); ) {
                 try {
                     //检查kafka客户端是否断开连接,如果断开把日志写入到文件
-                    if (!available.get()) {
-                        if (!failedQueue.isEmpty()) {
-                            Log log = failedQueue.poll(5, TimeUnit.SECONDS);
-                            if (Objects.nonNull(log)) {
-                                try {
-                                    String content = FileAppender.parseLog(log, logProperties);
-                                    plantOutputStream(content.length());
-                                    backupOutputWrite.write(content);
-                                    backupOutputWrite.flush();
-                                } catch (Exception e) {
-                                    failedQueue.add(log);
-                                    e.printStackTrace();
-                                } finally {
-                                    if (Objects.nonNull(backupOutputWrite))
-                                        try {
-                                            backupOutputWrite.close();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                }
-                            }
-                        } else {
-                            if (Objects.nonNull(backupOutputWrite))
-                                try {
-                                    backupOutputWrite.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                } finally {
-                                    backupOutputWrite = null;
-                                }
+//                    if (!available.get()) {
+//                        if (!failedQueue.isEmpty()) {
+                    Log log = failedQueue.poll(5, TimeUnit.SECONDS);
+                    if (Objects.nonNull(log)) {
+                        try {
+                            String content = FileAppender.parseLog(log, logProperties);
+                            plantOutputStream(content.length());
+                            backupOutputWrite.write(content);
+                            backupOutputWrite.flush();
+                        } catch (Exception e) {
+                            failedQueue.add(log);
+                            e.printStackTrace();
+                        } finally {
+//                            if (Objects.nonNull(backupOutputWrite))
+//                                try {
+//                                    backupOutputWrite.close();
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                }
                         }
-                    } else {
-                        //如果链接正常,检查是否有
-
                     }
+//                        } else {
+//                            if (Objects.nonNull(backupOutputWrite))
+//                                try {
+//                                    backupOutputWrite.close();
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                } finally {
+//                                    backupOutputWrite = null;
+//                                }
+//                        }
+//                    } else {
+//                        //如果链接正常,检查是否有
+//
+//                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     break;
@@ -405,6 +417,7 @@ public class KafkaAppender extends Appender {
                 if (Objects.nonNull(backupOutputWrite)) {
                     backupOutputWrite.flush();
                     backupOutputWrite.close();
+                    backupOutputWrite = null;
                 }
             } catch (IOException e) {
                 e.printStackTrace();

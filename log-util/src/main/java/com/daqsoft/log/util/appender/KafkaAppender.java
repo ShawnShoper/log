@@ -164,14 +164,14 @@ public class KafkaAppender extends Appender {
         //程序启动后连接不健康失败情况下,检测kafka终端是否健康,并重新创建连接
 //        registryConnectionChecker();
 
-        fileName = fileProperties.getFileName();
-        fileDir = this.kafka.getKafkaBackDir();
-        File file = new File(fileDir);
-        if (!file.exists()) if (!file.mkdirs())
-            throw new RuntimeException("Can not create dir ['" + fileDir + "'] ,maybe your current user no permission or has being used");
-        if (Objects.nonNull(fileProperties.getRolling())) {
-            rollingPattern = fileProperties.getRolling().getPattern();
-        }
+//        fileName = fileProperties.getFileName();
+//        fileDir = this.kafka.getKafkaBackDir();
+//        File file = new File(fileDir);
+//        if (!file.exists()) if (!file.mkdirs())
+//            throw new RuntimeException("Can not create dir ['" + fileDir + "'] ,maybe your current user no permission or has being used");
+//        if (Objects.nonNull(fileProperties.getRolling())) {
+//            rollingPattern = fileProperties.getRolling().getPattern();
+//        }
         //去掉初始化数据流...
 //        try {
 //            plantOutputStream(0);
@@ -180,18 +180,18 @@ public class KafkaAppender extends Appender {
 //        }
         //清理之前的文件
 //        revertLogToMQ();
-        if (StringUtil.nonEmpty(fileProperties.getFileSize())) {
-            //解析file size
-            final String sizeReg = "(\\d+)\\s?(MB|KB|GB)";
-            Pattern pattern = Pattern.compile(sizeReg);
-            Matcher matcher = pattern.matcher(fileProperties.getFileSize());
-            if (matcher.find()) {
-                int cap = Integer.valueOf(matcher.group(1));
-                String unit = matcher.group(2);
-                FileCap fileUnit = FileCap.valueOf(unit);
-                maxFileSize = cap * fileUnit.size;
-            }
-        }
+//        if (StringUtil.nonEmpty(fileProperties.getFileSize())) {
+//            //解析file size
+//            final String sizeReg = "(\\d+)\\s?(MB|KB|GB)";
+//            Pattern pattern = Pattern.compile(sizeReg);
+//            Matcher matcher = pattern.matcher(fileProperties.getFileSize());
+//            if (matcher.find()) {
+//                int cap = Integer.valueOf(matcher.group(1));
+//                String unit = matcher.group(2);
+//                FileCap fileUnit = FileCap.valueOf(unit);
+//                maxFileSize = cap * fileUnit.size;
+//            }
+//        }
     }
 
     KafkaProducer<String, String> checkerProducer = null;

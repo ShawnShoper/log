@@ -87,6 +87,7 @@ public class LogProcessor {
                         remain.decrementAndGet();
                     }
                 } catch (InterruptedException e) {
+                    e.printStackTrace();
                     Thread.currentThread().interrupt();
                 }
             }

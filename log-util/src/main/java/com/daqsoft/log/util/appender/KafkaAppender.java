@@ -61,11 +61,11 @@ public class KafkaAppender extends Appender {
         kid = kafka.getKafkaKey();
         if (kafkaConfig.getCode() == 0) {
             config = kafkaConfig.getData();
-            this.producer = new KafkaProducer<>(config);
+           this. producer = new KafkaProducer<String, String>(config);
             if (Objects.isNull(config.get("topic")))
                 throw new RuntimeException("this topic not exists in server config");
             this.topic = config.get("topic").toString();
-            available.compareAndSet(false, true);
+//            available.compareAndSet(false, true);
         } else {
             throw new KafkaConnectionException(kafkaConfig.getMessage());
         }
@@ -85,32 +85,32 @@ public class KafkaAppender extends Appender {
         try {
             String json = mapper.writeValueAsString(log);
             try {
-                boolean before = available.get();
+//                boolean before = available.get();
 //                producer.
                 //Kafka key
 //                if (available.get()) {
-                ProducerRecord<String, String> producerRecord = new ProducerRecord<>(Objects.isNull(log.getChannel()) ? this.topic : log.getChannel(), 0, kid, json);
-                producer.send(producerRecord, (metadata, exception) -> {
-                    if (!before && available.get()) {
-                        //如果之前是链接失败的,现在成功链接后,进行消息回写
-                        revertLogToMQ();
-                    }
-                    if (Objects.nonNull(exception)) {
-                        failedQueue.add(log);
-                        available.compareAndSet(true, false);
+                    ProducerRecord<String, String> producerRecord = new ProducerRecord<>(Objects.isNull(log.getChannel()) ? this.topic : log.getChannel(), 0, kid, json);
+                    producer.send(producerRecord, (metadata, exception) -> {
+//                        if (!before && available.get()) {
+//                            //如果之前是链接失败的,现在成功链接后,进行消息回写
+//                            revertLogToMQ();
+//                        }
+//                        if (Objects.nonNull(exception)) {
+//                            failedQueue.add(log);
+//                            available.compareAndSet(true, false);
 //                            disConnect();
-                    }
-                });
-                //重启kafka后,这里无法进行flush导致系统停顿卡死.
-                producer.flush();
+//                        }
+                    });
+                    //重启kafka后,这里无法进行flush导致系统停顿卡死.
+                    producer.flush();
 //                    available.compareAndSet(false, true);
 //                } else {
 //                    failedQueue.offer(log);
 //                }
             } catch (Exception e) {
                 e.printStackTrace();
-                available.compareAndSet(true, false);
-                failedQueue.add(log);
+//                available.compareAndSet(true, false);
+//                failedQueue.add(log);
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -160,7 +160,7 @@ public class KafkaAppender extends Appender {
         //初始化线程去解决失败数据
         //失败队列写入文件..
         //TODO 先注释掉一下模块,错误日志备份策略先走FileAppender
-        registyFailedHandle();
+//        registyFailedHandle();
         //程序启动后连接不健康失败情况下,检测kafka终端是否健康,并重新创建连接
 //        registryConnectionChecker();
 
@@ -179,7 +179,7 @@ public class KafkaAppender extends Appender {
 //            e.printStackTrace();
 //        }
         //清理之前的文件
-        revertLogToMQ();
+//        revertLogToMQ();
         if (StringUtil.nonEmpty(fileProperties.getFileSize())) {
             //解析file size
             final String sizeReg = "(\\d+)\\s?(MB|KB|GB)";
@@ -194,11 +194,14 @@ public class KafkaAppender extends Appender {
         }
     }
 
+    KafkaProducer<String, String> checkerProducer = null;
+
     /**
      * Registry kafka connection checker
      * if kafka connection break then reconnect
      */
     private void registryConnectionChecker() {
+
         Thread reconnect = new Thread(() -> {
             for (; !Thread.currentThread().isInterrupted(); ) {
                 try {
@@ -206,31 +209,30 @@ public class KafkaAppender extends Appender {
 
                     //检查连接是否通畅
                     ProducerRecord<String, String> producerRecord = new ProducerRecord<>(String.valueOf(config.get("checker_topic")), 0, "", "ping");
-                    producer.send(producerRecord, (metadata, exception) -> {
+                    checkerProducer.send(producerRecord, (metadata, exception) -> {
                         if (Objects.isNull(exception)) {
                             available.compareAndSet(false, true);
                             if (!before && available.get()) {
                                 //如果之前是链接失败的,现在成功链接后,进行消息回写
                                 revertLogToMQ();
-                            } else {
-                                initConnect();
                             }
                         } else {
                             available.compareAndSet(true, false);
                         }
                     });
-                    producer.flush();
+                    checkerProducer.flush();
                     TimeUnit.SECONDS.sleep(5);
                 } catch (Exception e) {
-                    if (e instanceof InterruptedException)
-                        Thread.currentThread().interrupt();
                     e.printStackTrace();
+                    if (e instanceof InterruptedException) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
             }
         });
         reconnect.setDaemon(true);
         reconnect.setName("log-kafka-appender-reconnect");
-//        reconnect.start();
+        reconnect.start();
     }
 
 
@@ -275,10 +277,12 @@ public class KafkaAppender extends Appender {
         try {
             if (Objects.nonNull(producer))
                 producer.close();
+            if (Objects.nonNull(checkerProducer)) checkerProducer.close();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             producer = null;
+            checkerProducer = null;
         }
     }
 

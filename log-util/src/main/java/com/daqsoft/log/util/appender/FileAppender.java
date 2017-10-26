@@ -85,12 +85,14 @@ public class FileAppender extends Appender {
             if (nowRolling > rolling) {
                 rolling = nowRolling;
                 change = true;
+                segmentCount = 0;
             }
         }
         if (Objects.nonNull(outputStream))
             //文件长度将超过或达到设置上限.分割日志文件
             if (maxFileSize > 0 && ((fileSize + size) > maxFileSize)) {
                 change = true;
+                segmentCount = 0;
             }
 
         if (change) {

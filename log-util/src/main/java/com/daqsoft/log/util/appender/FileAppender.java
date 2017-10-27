@@ -173,9 +173,7 @@ public class FileAppender extends Appender {
                 .append(log.getBusiness().getVia()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getLevel()).append(Constans.PLACEHOLDER)
                 .append(log.getBusiness().getModel()).append(Constans.PLACEHOLDER)
-                .append(log.getBusiness().getContent().replace(Constans.NEWLINE, Constans.PLACEHOLDER2))
-                .append(Constans.PLACEHOLDER);
-        stringBuilder.setLength(stringBuilder.length() - 1);
+                .append(log.getBusiness().getContent().replace(Constans.NEWLINE, Constans.PLACEHOLDER2));
         return stringBuilder.toString() + Constans.NEWLINE;
     }
 
@@ -198,11 +196,13 @@ public class FileAppender extends Appender {
             log.setPid(StringUtil.isEmpty(logs[7]) ? 0 : Integer.valueOf(logs[7]));
             log.setHost(logs[8]);
             log.setPort(Integer.valueOf(logs[9]));
+            log.setChannel(logs[10]);
             Business business = new Business();
-            business.setVia(logs[10]);
-            business.setLevel(logs[11]);
-            business.setModel(logs[12]);
-            business.setContent(logs[13]);
+            business.setVia(logs[11]);
+            business.setLevel(logs[12]);
+            business.setModel(logs[13]);
+            String content = logs[14];
+            business.setContent(content.replace(Constans.PLACEHOLDER2, Constans.NEWLINE));
             log.setBusiness(business);
         }
         return log;

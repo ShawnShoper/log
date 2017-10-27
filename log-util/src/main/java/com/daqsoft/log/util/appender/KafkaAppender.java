@@ -91,7 +91,7 @@ public class KafkaAppender extends Appender {
         }
         if (Objects.isNull(json)) {
             over.compareAndSet(false, true);
-            failedQueue.add(log);
+            failedQueue.offer(log);
             return;
         }
         try {
@@ -106,7 +106,7 @@ public class KafkaAppender extends Appender {
 //                            revertLogToMQ();
 //                        }
                     if (Objects.nonNull(exception)) {
-                        failedQueue.add(log);
+                        failedQueue.offer(log);
                         available.compareAndSet(true, false);
 //                            disConnect();
                     }
@@ -120,7 +120,7 @@ public class KafkaAppender extends Appender {
         } catch (Exception e) {
             e.printStackTrace();
             available.compareAndSet(true, false);
-            failedQueue.add(log);
+            failedQueue.offer(log);
         }finally {
             over.compareAndSet(false, true);
         }
@@ -244,7 +244,7 @@ public class KafkaAppender extends Appender {
 
 
     private void revertLogToMQ() {
-        if (Objects.nonNull(backupOutputWrite))
+         if (Objects.nonNull(backupOutputWrite))
             try {
                 backupOutputWrite.flush();
                 backupOutputWrite.close();
@@ -258,7 +258,7 @@ public class KafkaAppender extends Appender {
             //如果当前文件名跟备份文件一致，不做操作
 
             for (File logFile : files) {
-                if (!fileName.equals(logFile.getName())) {
+                if (logFile.getName().startsWith(fileName)) {
                     BufferedReader bufferedReader = null;
                     try {
                         bufferedReader = new BufferedReader(new FileReader(logFile));
@@ -323,7 +323,7 @@ public class KafkaAppender extends Appender {
                             backupOutputWrite.write(content);
                             backupOutputWrite.flush();
                         } catch (Exception e) {
-                            failedQueue.add(log);
+                            failedQueue.offer(log);
                             e.printStackTrace();
                         }
                     }

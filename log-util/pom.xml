@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.daqsoft.log</groupId>
             <artifactId>log-api</artifactId>
-            <version>0.0.3</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

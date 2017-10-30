@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <artifactId>log</artifactId>
     <groupId>com.daqsoft.log</groupId>
-    <version>0.0.3</version>
+    <version>1.0.0</version>
     <modules>
         <module>log-api</module>
         <module>log-util</module>

@@ -20,6 +20,12 @@ logLevel:   Debug //日志级别
 targets:    #记录器
   - File    #启用文件Appender
   - Sout    #启用控制台Appender
+  - Kafka   #启用Kafka Appender
+kafka:
+  kafkaServer:  192.168.2.56:8084   #日志服务器地址
+  kafkaKey: test                    #kafka key(向日志服务器申请)
+  kafkaCert:  test                  #kafka Cert(向日志服务器申请)
+  kafkaBackDir: D:/test/kafka/      #Kafka链接失败备份文件路径
 host: 0.0.0.0   # 项目启动占用IP
 port: 2222      # 项目启动占用端口
 application:  "springboot application"  #项目名称

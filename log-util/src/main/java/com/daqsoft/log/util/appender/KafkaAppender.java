@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -81,7 +82,7 @@ public class KafkaAppender extends Appender {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    private void send(Log log) {
+    private synchronized void send(Log log) {
         over.compareAndSet(true, false);
         String json = null;
         try {
@@ -95,6 +96,7 @@ public class KafkaAppender extends Appender {
             return;
         }
         try {
+            CountDownLatch countDownLatch = new CountDownLatch(1);
 //                boolean before = available.get();
 //                producer.
             //Kafka key
@@ -110,9 +112,11 @@ public class KafkaAppender extends Appender {
                         available.compareAndSet(true, false);
 //                            disConnect();
                     }
+                    countDownLatch.countDown();
                 });
                 //重启kafka后,这里无法进行flush导致系统停顿卡死.
                 producer.flush();
+                countDownLatch.await();
 //                available.compareAndSet(false, true);
             } else {
                 failedQueue.offer(log);

@@ -10,7 +10,7 @@ kafka:
   kafkaKey: test
   kafkaCert:  test
   kafkaBackDir: D:/test/kafka/
-application:  "test"
+application:  "test3"
 fileProperties:
   fileDir:  D:/test/
   fileName: log.log

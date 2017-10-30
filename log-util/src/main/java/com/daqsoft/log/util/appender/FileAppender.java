@@ -161,19 +161,19 @@ public class FileAppender extends Appender {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(Constans.MAJORVERSION).append(Constans.PLACEHOLDER)
                 .append(log.getTime()).append(Constans.PLACEHOLDER)
-                .append(log.getApplication()).append(Constans.PLACEHOLDER)
-                .append(log.getClassName()).append(Constans.PLACEHOLDER)
+                .append(Objects.isNull(log.getApplication()) ? Constans.EMPTY : log.getApplication()).append(Constans.PLACEHOLDER)
+                .append(Objects.isNull(log.getClassName()) ? Constans.EMPTY : log.getClassName()).append(Constans.PLACEHOLDER)
                 .append(log.getLineNumber()).append(Constans.PLACEHOLDER)
-                .append(log.getMethodName()).append(Constans.PLACEHOLDER)
+                .append(Objects.isNull(log.getMethodName()) ? Constans.EMPTY : log.getMethodName()).append(Constans.PLACEHOLDER)
                 .append(log.getContentType()).append(Constans.PLACEHOLDER)
                 .append(log.getPid()).append(Constans.PLACEHOLDER)
-                .append(logProperties.getHost()).append(Constans.PLACEHOLDER)
+                .append(Objects.isNull(logProperties.getHost()) ? Constans.EMPTY : logProperties.getHost()).append(Constans.PLACEHOLDER)
                 .append(logProperties.getPort()).append(Constans.PLACEHOLDER)
-                .append(log.getChannel()).append(Constans.PLACEHOLDER)
-                .append(log.getBusiness().getVia()).append(Constans.PLACEHOLDER)
-                .append(log.getBusiness().getLevel()).append(Constans.PLACEHOLDER)
-                .append(log.getBusiness().getModel()).append(Constans.PLACEHOLDER)
-                .append(log.getBusiness().getContent().replace(Constans.NEWLINE, Constans.PLACEHOLDER2));
+                .append(Objects.isNull(log.getChannel()) ? Constans.EMPTY : log.getChannel()).append(Constans.PLACEHOLDER)
+                .append(Objects.isNull(log.getBusiness().getVia()) ? Constans.EMPTY : log.getBusiness().getVia()).append(Constans.PLACEHOLDER)
+                .append(Objects.isNull(log.getBusiness().getLevel()) ? Constans.EMPTY : log.getBusiness().getLevel()).append(Constans.PLACEHOLDER)
+                .append(Objects.isNull(log.getBusiness().getModel()) ? Constans.EMPTY : log.getBusiness().getModel()).append(Constans.PLACEHOLDER)
+                .append(Objects.isNull(log.getBusiness().getContent()) ? Constans.EMPTY : log.getBusiness().getContent().replace(Constans.NEWLINE, Constans.PLACEHOLDER2));
         return stringBuilder.toString() + Constans.NEWLINE;
     }
 
@@ -188,20 +188,20 @@ public class FileAppender extends Appender {
         Log log = new Log();
         if (Constans.MAJORVERSION.equals(logs[0])) {
             log.setTime(Objects.nonNull(logs[1]) ? Long.valueOf(logs[1]) : 0);
-            log.setApplication(logs[2]);
-            log.setClassName(logs[3]);
+            log.setApplication(StringUtil.isEmpty(logs[2]) ? null : logs[2]);
+            log.setClassName(StringUtil.isEmpty(logs[3]) ? null : logs[3]);
             log.setLineNumber(Objects.nonNull(logs[4]) ? Integer.valueOf(logs[4]) : 0);
-            log.setMethodName(logs[5]);
-            log.setContentType(logs[6]);
+            log.setMethodName(StringUtil.isEmpty(logs[5]) ? null : logs[5]);
+            log.setContentType(StringUtil.isEmpty(logs[6]) ? null : logs[6]);
             log.setPid(StringUtil.isEmpty(logs[7]) ? 0 : Integer.valueOf(logs[7]));
-            log.setHost(logs[8]);
+            log.setHost(StringUtil.isEmpty(logs[8]) ? null : logs[8]);
             log.setPort(Integer.valueOf(logs[9]));
-            log.setChannel(logs[10]);
+            log.setChannel(StringUtil.isEmpty(logs[10]) ? null : logs[10]);
             Business business = new Business();
-            business.setVia(logs[11]);
-            business.setLevel(logs[12]);
-            business.setModel(logs[13]);
-            String content = logs[14];
+            business.setVia(StringUtil.isEmpty(logs[11]) ? null : logs[11]);
+            business.setLevel(StringUtil.isEmpty(logs[12]) ? null : logs[12]);
+            business.setModel(StringUtil.isEmpty(logs[13]) ? null : logs[13]);
+            String content = StringUtil.isEmpty(logs[14]) ? null : logs[14];
             business.setContent(content.replace(Constans.PLACEHOLDER2, Constans.NEWLINE));
             log.setBusiness(business);
         }

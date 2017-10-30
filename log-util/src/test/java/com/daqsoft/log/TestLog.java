@@ -11,16 +11,17 @@ public class TestLog {
 
     @Test
     public void testThrowable() throws InterruptedException {
-        for (int i = 0; i < 10000; i++) {
-            try {
-                logger.info("User info message");
-                throwable();
-            } catch (Throwable t) {
-//                logger.error("User handle a exceptions", t);
-            }
-            System.out.println(10000 - i);
-            TimeUnit.SECONDS.sleep(2);
-        }
+//        for (int i = 0; i < 100; i++) {
+//            try {
+//                logger.info("User info message" + i);
+//                throwable();
+//            } catch (Throwable t) {
+////                logger.error("User handle a exceptions", t);
+//            }
+//            System.out.println(100 - i);
+////            TimeUnit.SECONDS.sleep(2);
+//        }
+        TimeUnit.MINUTES.sleep(2);
     }
 
     public void throwable() {

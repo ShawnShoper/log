@@ -47,10 +47,10 @@ public class Logger {
     public void info(String formatter, Object... obj) {
         info(null, format(formatter, obj));
     }
-
-    public void info(String channel, String formatter, Object... obj) {
-        info(channel, format(formatter, obj));
-    }
+//
+//    public void info(String channel, String formatter, Object... obj) {
+//        info(channel, format(formatter, obj));
+//    }
 
     public void warn(LogInfo logMsg) {
         log(null, logMsg, Constans.WARN);

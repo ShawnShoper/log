@@ -6,7 +6,7 @@ targets:
 host: 192.168.2.56
 port: 2222
 kafka:
-  kafkaServer:  192.168.2.56:8084
+  kafkaServer:  120.76.213.29:8084
   kafkaKey: test
   kafkaCert:  test
   kafkaBackDir: D:/test/kafka/

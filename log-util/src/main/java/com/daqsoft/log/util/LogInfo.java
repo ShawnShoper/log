@@ -1,7 +1,11 @@
 package com.daqsoft.log.util;
 
+/**
+ * 日志信息
+ */
 public class LogInfo {
     private String msg;
+    //错误堆栈
     private Throwable throwable;
 
     public String getMsg() {

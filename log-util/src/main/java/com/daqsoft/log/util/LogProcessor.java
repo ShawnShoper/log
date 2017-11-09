@@ -161,7 +161,7 @@ public class LogProcessor {
             Throwable throwable = logInfo.getThrowable();
             String logMsg = logInfo.getMsg();
             if (Objects.nonNull(throwable)) {
-                //TODO reset the throwable
+                //redirect the default throwable stream
                 InnerPrintStream printStream = new InnerPrintStream(new InnerOutPutStream());
                 throwable.printStackTrace(printStream);
                 printStream.close();

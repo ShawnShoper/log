@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <artifactId>log</artifactId>
     <groupId>com.daqsoft.log</groupId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
     <modules>
         <module>log-api</module>
         <module>log-util</module>
@@ -16,7 +16,7 @@
             <dependency>
                 <groupId>com.daqsoft.commons</groupId>
                 <artifactId>daqsoft-commons-dependencies</artifactId>
-                <version>1.0.2</version>
+                <version>1.0.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

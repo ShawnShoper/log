@@ -1,8 +1,8 @@
 logLevel: Error
 targets:
   - Sout
-#  - File
-#  - Kafka
+  - File
+  - Kafka
 host: 192.168.2.56
 port: 2222
 kafka:

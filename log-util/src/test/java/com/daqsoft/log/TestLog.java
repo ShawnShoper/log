@@ -11,7 +11,7 @@ public class TestLog {
 
     @Test
     public void testThrowable() throws InterruptedException {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1; i++) {
             try {
                 logger.info("User info message" + i);
                 throwable();

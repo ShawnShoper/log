@@ -3,7 +3,7 @@ package com.daqsoft.log.util.appender;
 import com.daqsoft.commons.core.DateUtil;
 import com.daqsoft.commons.core.StringUtil;
 import com.daqsoft.commons.feign.support.SpringMvcFeign;
-import com.daqsoft.commons.responseEntity.DataResponse;
+import com.daqsoft.commons.responseentity.DataResponse;
 import com.daqsoft.log.api.KafkaConfigApi;
 import com.daqsoft.log.core.serialize.Log;
 import com.daqsoft.log.util.config.FileProperties;
@@ -121,7 +121,7 @@ public class KafkaAppender extends Appender {
             e.printStackTrace();
             available.compareAndSet(true, false);
             failedQueue.offer(log);
-        }finally {
+        } finally {
             over.compareAndSet(false, true);
         }
 
@@ -244,7 +244,7 @@ public class KafkaAppender extends Appender {
 
 
     private void revertLogToMQ() {
-         if (Objects.nonNull(backupOutputWrite))
+        if (Objects.nonNull(backupOutputWrite))
             try {
                 backupOutputWrite.flush();
                 backupOutputWrite.close();

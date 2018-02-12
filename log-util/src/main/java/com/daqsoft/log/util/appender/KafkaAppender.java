@@ -63,7 +63,7 @@ public class KafkaAppender extends Appender {
             if (Objects.isNull(config.get("topic")))
                 throw new RuntimeException("this topic not exists in server config");
             this.topic = config.get("topic").toString();
-//            available.compareAndSet(false, true);
+//          available.compareAndSet(false, true);
         } else {
             throw new KafkaConnectionException(kafkaConfig.getMessage());
         }

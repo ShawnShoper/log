@@ -1,21 +1,36 @@
 #   日志记录工具
-V0.0.4  <br>
-毫无修改
-V0.0.3_1<br>
+V<b>0.0.4</b>
+
+毫无修改,只想好好发个版本
+
+V<b>0.0.3_1</b>
+
 1.修复因class名字太长.在缩短时,取得是第二字母而不是第一个字母
+
 2.修复logger.info()方法重载的bug.
+
 #版本变更<br>
-v0.0.3<br>
-1.删除Logfactory中脑残的代码<br>
-2.增加@ContentType,@Channel用来分别指定日志内容的内容,以及实时日志队列的Topic.<br>
-3.去掉色彩日志输出.<br>
-V0.0.21<br>
+v<b>0.0.3</b><br>
+1.删除Logfactory中脑残的代码
+
+2.增加<b><span style="color:red">@ContentType</span></b>,<b><span style="color:red">@Channel</span></b>用来分别指定日志内容的内容,以及实时日志队列的Topic.
+
+3.去掉色彩日志输出.
+
+V<b>0.0.21</b>
+
 1.提供日志级别配置
-V0.0.2<br>
-1.提供kafka日志对接.(使用Kafka Appender时,请加上FileAppender做好Kafka连接不通时的日志备份)<br>
-V0.0.1<br>
-1.提供Console日志输出<br>
-2.提供File日志输出<br>
+
+V<b>0.0.2</b>
+
+1.提供kafka日志对接.(使用<b>Kafka Appender</b>时,请加上<b>FileAppender</b>做好<b>Kafka</b>连接断开时的日志备份)
+
+V<b>0.0.1</b>
+
+1.提供<b>Console</b>日志输出
+
+2.提供<b>File</b>日志输出
+
 
 #使用说明
 #### 在项目资源文件夹添加log.yml文件
@@ -79,8 +94,16 @@ partten:  "%-23{yyyy-MM-dd HH:mm:ss.sss}t %5l %-5p --- [%15mn:%ln] %-41cn: %c"
             logger.warn("测试warn");
             logger.warn("测试%s","warn");
             logger.log("测试自定级别", Constans.ERROR);
-            //这里休眠2秒,便于日志处理器有时间去处理记录的日志
-            TimeUnit.SECONDS.sleep(2);
         }
     }
 ```
+
+---
+                        Spilt Line
+---
+
+###时序图
+  ![Log时序图](doc/img/sequence.png "Log时序图")
+  
+  上图为最基本的时序图,其中个别过程并没有画出.异步操作放在了最后的Appender处理
+

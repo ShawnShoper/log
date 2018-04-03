@@ -102,8 +102,9 @@ partten:  "%-23{yyyy-MM-dd HH:mm:ss.sss}t %5l %-5p --- [%15mn:%ln] %-41cn: %c"
                         Spilt Line
 ---
 
-###时序图
-  ![Log时序图](doc/img/sequence.png "Log时序图")
+### 时序图
+
+![Log时序图](doc/img/sequence.png "Log时序图")
   
-  上图为最基本的时序图,其中个别过程并没有画出.异步操作放在了最后的Appender处理
+上图为最基本的时序图,其中个别过程并没有画出.异步操作放在了最后的Appender处理
 

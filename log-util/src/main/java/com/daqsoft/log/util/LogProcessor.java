@@ -125,11 +125,15 @@ public class LogProcessor {
         Log log = null;
         try {
             String methodName = lastCall.getMethodName();
-            String className = lastCall.getClassName().toString();
+            String className = lastCall.getClassName();
             String model = null;
+            boolean isEmptyContentType = false;
             String contentType = com.daqsoft.log.util.config.ContentType.STR.name();
+            //Get the method that is in the log record.
             Optional<Method> first = Arrays.stream(Class.forName(className).getDeclaredMethods()).filter(e -> e.getName().equals(methodName)).findFirst();
+            //if true,check method used annotations
             if (first.isPresent()) {
+                //check method used annotations
                 Method te = first.get();
                 LogModel annotation = te.getAnnotation(LogModel.class);
                 if (Objects.nonNull(annotation))
@@ -137,22 +141,32 @@ public class LogProcessor {
                 ContentType ct = te.getAnnotation(ContentType.class);
                 if (Objects.nonNull(ct))
                     contentType = ct.value().name();
+                else
+                    isEmptyContentType = true;
                 if (Objects.isNull(channel)) {
                     Channel c = te.getAnnotation(Channel.class);
                     if (Objects.nonNull(c))
                         channel = c.value();
                 }
-            } else {
-                LogModel classLogModel = clazz.getAnnotation(LogModel.class);
-                if (Objects.nonNull(classLogModel))
-                    model = classLogModel.value();
-                ContentType ct = clazz.getAnnotation(ContentType.class);
-                if (Objects.nonNull(ct))
-                    contentType = ct.value().name();
+            }
+            {
+                //if property is null,and check class used annotations
+                if (Objects.isNull(model)) {
+                    LogModel classLogModel = clazz.getAnnotation(LogModel.class);
+                    if (Objects.nonNull(classLogModel))
+                        model = classLogModel.value();
+                }
+                if (isEmptyContentType) {
+                    ContentType ct = clazz.getAnnotation(ContentType.class);
+                    if (Objects.nonNull(ct))
+                        contentType = ct.value().name();
+                }
                 if (Objects.isNull(channel)) {
-                    Channel c = clazz.getAnnotation(Channel.class);
-                    if (Objects.nonNull(c))
-                        channel = c.value();
+                    if (Objects.isNull(channel)) {
+                        Channel c = clazz.getAnnotation(Channel.class);
+                        if (Objects.nonNull(c))
+                            channel = c.value();
+                    }
                 }
             }
             LogProperties logConfig = LogFactory.getLogProperties();

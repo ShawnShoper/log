@@ -125,7 +125,7 @@ public class LogProcessor {
         Log log = null;
         try {
             String methodName = lastCall.getMethodName();
-            String className = lastCall.getClassName().toString();
+            String className = lastCall.getClassName();
             String model = null;
             String contentType = com.daqsoft.log.util.config.ContentType.STR.name();
             Optional<Method> first = Arrays.stream(Class.forName(className).getDeclaredMethods()).filter(e -> e.getName().equals(methodName)).findFirst();

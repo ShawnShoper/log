@@ -4,24 +4,31 @@ import com.daqsoft.log.util.LogFactory;
 import com.daqsoft.log.util.Logger;
 import org.junit.Test;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class TestLog {
     Logger logger = LogFactory.getLogger(TestLog.class);
+    ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     @Test
     public void testThrowable() throws InterruptedException {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 2; i++) {
             try {
-                logger.info("User info message" + i);
-                throwable();
+                int finalI = i;
+                executorService.submit(() -> {
+                    logger.info("User info message" + finalI);
+                    Thread t = new Thread(() -> logger.info("sub thread ..."));
+                    t.start();
+                });
             } catch (Throwable t) {
 //                logger.error("User handle a exceptions", t);
             }
             System.out.println(100 - i);
 //            TimeUnit.SECONDS.sleep(2);
         }
-//        TimeUnit.MINUTES.sleep(2);
+        TimeUnit.MINUTES.sleep(2);
     }
 
     public void throwable() {

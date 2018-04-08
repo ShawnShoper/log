@@ -9,13 +9,15 @@ import com.daqsoft.log.util.annotation.LogModel;
 import com.daqsoft.log.util.appender.Appender;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.queue.LogQueue;
+import com.daqsoft.log.util.share.LogThreadLocal;
+import com.daqsoft.log.util.share.MethodCall;
+import com.daqsoft.log.util.share.ThreadSemaphore;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -128,17 +130,33 @@ public class LogProcessor {
             String className = lastCall.getClassName();
             String model = null;
             String contentType = com.daqsoft.log.util.config.ContentType.STR.name();
+            //record mcc
+            Optional<ThreadSemaphore> threadSemaphoreOptional = LogThreadLocal.getThreadSemaphore();
+            ThreadSemaphore threadSemaphore;
+            if (!threadSemaphoreOptional.isPresent())
+                threadSemaphore = new ThreadSemaphore();
+            else {
+
+
+                threadSemaphore = threadSemaphoreOptional.get();
+
+
+            }
+
+            //Get method name
             Optional<Method> first = Arrays.stream(Class.forName(className).getDeclaredMethods()).filter(e -> e.getName().equals(methodName)).findFirst();
             if (first.isPresent()) {
-                Method te = first.get();
-                LogModel annotation = te.getAnnotation(LogModel.class);
+                Method method = first.get();
+                threadSemaphore.getThreadSemaphores().add(new MethodCall(method,Thread.currentThread().getStackTrace()));
+                System.out.println(threadSemaphore.getId());
+                LogModel annotation = method.getAnnotation(LogModel.class);
                 if (Objects.nonNull(annotation))
                     model = annotation.value();
-                ContentType ct = te.getAnnotation(ContentType.class);
+                ContentType ct = method.getAnnotation(ContentType.class);
                 if (Objects.nonNull(ct))
                     contentType = ct.value().name();
                 if (Objects.isNull(channel)) {
-                    Channel c = te.getAnnotation(Channel.class);
+                    Channel c = method.getAnnotation(Channel.class);
                     if (Objects.nonNull(c))
                         channel = c.value();
                 }
@@ -169,6 +187,7 @@ public class LogProcessor {
             }
             business.setContent(logMsg);
             business.setLevel(logLevel);
+            LogThreadLocal.setThreadSemaphore(threadSemaphore);
             log = new Log(channel, logConfig.getApplication(), System.currentTimeMillis(), contentType, logConfig.getHost(), logConfig.getPort(), pid, className, methodName, lastCall.getLineNumber(), business);
         } catch (Throwable e) {
             e.printStackTrace();

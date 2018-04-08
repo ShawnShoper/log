@@ -1,5 +1,5 @@
 #   日志记录工具
-B<b>1.0.0</b>
+V<b>1.0.0</b>
 
 新功能:预新增MCC(method call chain)功能
 

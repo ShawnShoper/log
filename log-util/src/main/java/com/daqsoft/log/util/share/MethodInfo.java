@@ -2,12 +2,15 @@ package com.daqsoft.log.util.share;
 
 import java.lang.reflect.Method;
 
-public class MethodCall {
+public class MethodInfo {
     private Method method ;
     StackTraceElement[] stackTraceElements;
-    private String pakcageName;
-    public MethodCall(Method method, StackTraceElement[] stackTraceElements) {
+    public MethodInfo(Method method, StackTraceElement[] stackTraceElements) {
         this.method = method;
+        this.stackTraceElements = stackTraceElements;
+    }
+
+    public void setStackTraceElements(StackTraceElement[] stackTraceElements) {
         this.stackTraceElements = stackTraceElements;
     }
 

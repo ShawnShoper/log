@@ -10,7 +10,6 @@ import com.daqsoft.log.util.appender.Appender;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.queue.LogQueue;
 import com.daqsoft.log.util.share.LogThreadLocal;
-import com.daqsoft.log.util.share.MethodCall;
 import com.daqsoft.log.util.share.ThreadSemaphore;
 
 import java.io.IOException;
@@ -113,6 +112,8 @@ public class LogProcessor {
         }
     }
 
+
+
     /**
      * 装配日志内容.
      *
@@ -133,13 +134,15 @@ public class LogProcessor {
             //record mcc
             Optional<ThreadSemaphore> threadSemaphoreOptional = LogThreadLocal.getThreadSemaphore();
             ThreadSemaphore threadSemaphore;
+
+            int recordNumber = lastCall.getLineNumber();
             if (!threadSemaphoreOptional.isPresent())
                 threadSemaphore = new ThreadSemaphore();
             else {
-
-
                 threadSemaphore = threadSemaphoreOptional.get();
 
+                //take method call number and method number and thread id.
+                //if all condition is true
 
             }
 
@@ -147,7 +150,6 @@ public class LogProcessor {
             Optional<Method> first = Arrays.stream(Class.forName(className).getDeclaredMethods()).filter(e -> e.getName().equals(methodName)).findFirst();
             if (first.isPresent()) {
                 Method method = first.get();
-                threadSemaphore.getThreadSemaphores().add(new MethodCall(method,Thread.currentThread().getStackTrace()));
                 System.out.println(threadSemaphore.getId());
                 LogModel annotation = method.getAnnotation(LogModel.class);
                 if (Objects.nonNull(annotation))
@@ -187,8 +189,7 @@ public class LogProcessor {
             }
             business.setContent(logMsg);
             business.setLevel(logLevel);
-            LogThreadLocal.setThreadSemaphore(threadSemaphore);
-            log = new Log(channel, logConfig.getApplication(), System.currentTimeMillis(), contentType, logConfig.getHost(), logConfig.getPort(), pid, className, methodName, lastCall.getLineNumber(), business);
+            log = new Log(channel, logConfig.getApplication(), System.currentTimeMillis(), contentType, logConfig.getHost(), logConfig.getPort(), pid, className, methodName, recordNumber, business);
         } catch (Throwable e) {
             e.printStackTrace();
         }

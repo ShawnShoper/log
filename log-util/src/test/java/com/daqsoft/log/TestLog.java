@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TestLog {
     Logger logger = LogFactory.getLogger(TestLog.class);
-    ExecutorService executorService = Executors.newFixedThreadPool(2);
+    ExecutorService executorService = Executors.newFixedThreadPool(1);
 
     @Test
     public void testThrowable() throws InterruptedException {
@@ -25,13 +25,12 @@ public class TestLog {
             } catch (Throwable t) {
 //                logger.error("User handle a exceptions", t);
             }
-            System.out.println(100 - i);
 //            TimeUnit.SECONDS.sleep(2);
         }
         TimeUnit.MINUTES.sleep(2);
     }
 
     public void throwable() {
-        throw new RuntimeException("i throw a runtime exception");
+//        throw new RuntimeException("i throw a runtime exception");
     }
 }

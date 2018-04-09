@@ -9,20 +9,39 @@ import java.util.List;
  */
 public class ThreadSemaphore {
     private String id;
-    List<MethodCall> threadSemaphores = new ArrayList<>();
+    private String tid;
+    private String firstStackToken;
+    private List<MethodInfo> threadSemaphores = new ArrayList<>();
+
     public ThreadSemaphore() {
-        this.id = IdGenerator.generate();
+        this.id = ThreadLocalUtil.generate();
     }
 
     public String getId() {
         return id;
     }
 
-    public List<MethodCall> getThreadSemaphores() {
-        return threadSemaphores;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void addThreadSemaphores(MethodCall methodCall) {
-        this.threadSemaphores = threadSemaphores;
+    public String getTid() {
+        return tid;
+    }
+
+    public void setTid(String tid) {
+        this.tid = tid;
+    }
+
+    public String getFirstStackToken() {
+        return firstStackToken;
+    }
+
+    public void setFirstStackToken(String firstStackToken) {
+        this.firstStackToken = firstStackToken;
+    }
+
+    public List<MethodInfo> getThreadSemaphores() {
+        return threadSemaphores;
     }
 }

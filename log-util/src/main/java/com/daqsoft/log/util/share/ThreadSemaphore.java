@@ -8,28 +8,35 @@ import java.util.List;
  * recording stack information
  */
 public class ThreadSemaphore {
-    private String id;
-    private String tid;
+    private Long id;
+    //curr thread id
+    private int tid;
     private String firstStackToken;
+    //the log root class name
+    private String rootClassName;
+    //the log root method name;
+    private String rootMethodName;
+    //the log root line number;
+    private int rootLineNumber;
     private List<MethodInfo> threadSemaphores = new ArrayList<>();
 
     public ThreadSemaphore() {
-        this.id = ThreadLocalUtil.generate();
+        this.id = ThreadLocalUtil.generateId();
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getTid() {
+    public int getTid() {
         return tid;
     }
 
-    public void setTid(String tid) {
+    public void setTid(int tid) {
         this.tid = tid;
     }
 
@@ -43,5 +50,29 @@ public class ThreadSemaphore {
 
     public List<MethodInfo> getThreadSemaphores() {
         return threadSemaphores;
+    }
+
+    public String getRootClassName() {
+        return rootClassName;
+    }
+
+    public void setRootClassName(String rootClassName) {
+        this.rootClassName = rootClassName;
+    }
+
+    public String getRootMethodName() {
+        return rootMethodName;
+    }
+
+    public void setRootMethodName(String rootMethodName) {
+        this.rootMethodName = rootMethodName;
+    }
+
+    public int getRootLineNumber() {
+        return rootLineNumber;
+    }
+
+    public void setRootLineNumber(int rootLineNumber) {
+        this.rootLineNumber = rootLineNumber;
     }
 }

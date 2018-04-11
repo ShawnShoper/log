@@ -10,10 +10,13 @@ import com.daqsoft.log.util.appender.Appender;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.queue.LogQueue;
 import com.daqsoft.log.util.share.LogThreadLocal;
+import com.daqsoft.log.util.share.MethodInfo;
+import com.daqsoft.log.util.share.ThreadLocalUtil;
 import com.daqsoft.log.util.share.ThreadSemaphore;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -113,7 +116,6 @@ public class LogProcessor {
     }
 
 
-
     /**
      * 装配日志内容.
      *
@@ -133,48 +135,62 @@ public class LogProcessor {
             String contentType = com.daqsoft.log.util.config.ContentType.STR.name();
             //record mcc
             Optional<ThreadSemaphore> threadSemaphoreOptional = LogThreadLocal.getThreadSemaphore();
-            ThreadSemaphore threadSemaphore;
-
             int recordNumber = lastCall.getLineNumber();
-            if (!threadSemaphoreOptional.isPresent())
-                threadSemaphore = new ThreadSemaphore();
-            else {
-                threadSemaphore = threadSemaphoreOptional.get();
-
-                //take method call number and method number and thread id.
-                //if all condition is true
-
-            }
-
             //Get method name
-            Optional<Method> first = Arrays.stream(Class.forName(className).getDeclaredMethods()).filter(e -> e.getName().equals(methodName)).findFirst();
-            if (first.isPresent()) {
-                Method method = first.get();
-                System.out.println(threadSemaphore.getId());
-                LogModel annotation = method.getAnnotation(LogModel.class);
-                if (Objects.nonNull(annotation))
-                    model = annotation.value();
-                ContentType ct = method.getAnnotation(ContentType.class);
-                if (Objects.nonNull(ct))
-                    contentType = ct.value().name();
-                if (Objects.isNull(channel)) {
-                    Channel c = method.getAnnotation(Channel.class);
-                    if (Objects.nonNull(c))
-                        channel = c.value();
-                }
+            Optional<Method> methodOptional = Arrays.stream(Class.forName(className).getDeclaredMethods()).filter(e -> e.getName().equals(methodName)).findFirst();
+            String firstStackToken = ThreadLocalUtil.firstStackToken(className + methodName + recordNumber);
+            boolean isNewChain = false;
+            Method method = null;
+            if (methodOptional.isPresent())
+                method = methodOptional.get();
+            if (threadSemaphoreOptional.isPresent()) {
+                //不存在的
+                if (ThreadLocalUtil.isNewChain(firstStackToken,recordNumber,method,Thread.currentThread().getStackTrace(), threadSemaphoreOptional))
+                    isNewChain = true;
+            } else isNewChain = true;
+
+            if (isNewChain) {
+                ThreadSemaphore threadSemaphore = new ThreadSemaphore();
+                threadSemaphore.setFirstStackToken(firstStackToken);
+                threadSemaphore.setRootMethodName(methodName);
+                threadSemaphore.setRootClassName(className);
+                threadSemaphore.setRootLineNumber(recordNumber);
+                MethodInfo methodInfo = new MethodInfo(method, Thread.currentThread().getStackTrace(),recordNumber);
+                threadSemaphore.getThreadSemaphores().add(methodInfo);
+                LogThreadLocal.setThreadSemaphore(threadSemaphore);
             } else {
-                LogModel classLogModel = clazz.getAnnotation(LogModel.class);
-                if (Objects.nonNull(classLogModel))
-                    model = classLogModel.value();
-                ContentType ct = clazz.getAnnotation(ContentType.class);
-                if (Objects.nonNull(ct))
-                    contentType = ct.value().name();
-                if (Objects.isNull(channel)) {
-                    Channel c = clazz.getAnnotation(Channel.class);
-                    if (Objects.nonNull(c))
-                        channel = c.value();
-                }
+                threadSemaphoreOptional.get().getThreadSemaphores().add(new MethodInfo(method, Thread.currentThread().getStackTrace(),recordNumber));
             }
+            System.out.println(logInfo.getMsg() + "\t" + LogThreadLocal.getThreadSemaphore().get().getFirstStackToken());
+            GenericDeclaration executable;
+            if (Objects.nonNull(method))
+                executable = method;
+            else
+                executable = clazz;
+            LogModel annotation = executable.getAnnotation(LogModel.class);
+            if (Objects.nonNull(annotation))
+                model = annotation.value();
+            ContentType ct = executable.getAnnotation(ContentType.class);
+            if (Objects.nonNull(ct))
+                contentType = ct.value().name();
+            if (Objects.isNull(channel)) {
+                Channel c = executable.getAnnotation(Channel.class);
+                if (Objects.nonNull(c))
+                    channel = c.value();
+            }
+//            } else {
+//                LogModel classLogModel = executable.getAnnotation(LogModel.class);
+//                if (Objects.nonNull(classLogModel))
+//                    model = classLogModel.value();
+//                ContentType ct = clazz.getAnnotation(ContentType.class);
+//                if (Objects.nonNull(ct))
+//                    contentType = ct.value().name();
+//                if (Objects.isNull(channel)) {
+//                    Channel c = clazz.getAnnotation(Channel.class);
+//                    if (Objects.nonNull(c))
+//                        channel = c.value();
+//                }
+//            }
             LogProperties logConfig = LogFactory.getLogProperties();
             Business business = new Business();
             business.setModel(model);

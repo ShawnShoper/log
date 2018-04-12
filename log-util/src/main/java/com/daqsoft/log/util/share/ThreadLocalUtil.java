@@ -39,16 +39,20 @@ public class ThreadLocalUtil {
      * First Step
      * calculate the first stack token value and compare to that before the chain's value of the thread local,
      * if result is true,the chain is not the seem chain.
+     * return 0 is new chain
+     * 1 not a new chain
+     * 2 is sub thread in the same chain
      */
-    public static boolean isNewChain(String firstStackToken, int lineNumber, Method method, StackTraceElement[] now, final Optional<ThreadSemaphore> threadSemaphoreOptional) {
-        if (method == null) return true;
+    public static int isNewChain(String firstStackToken, int lineNumber, Method method, StackTraceElement[] now, final Optional<ThreadSemaphore> threadSemaphoreOptional) {
+        if (method == null)
+            return 0;
         //依然得需要分析stack
         Class<?> aClass = getClass(method);
         String className = aClass.getName();
         String methodName = method.getName();
         if (threadSemaphoreOptional.isPresent()) {
-            if (firstStackToken.equals(threadSemaphoreOptional.get().getFirstStackToken())) return true;
-            if (Thread.currentThread().getId() != threadSemaphoreOptional.get().getTid()) return false;
+            if (firstStackToken.equals(threadSemaphoreOptional.get().getFirstStackToken())) return 0;
+            if (Thread.currentThread().getId() != threadSemaphoreOptional.get().getTid()) return 2;
             int index = -1;
             for (int i = 0; i < now.length; i++) {
                 StackTraceElement stackTraceElement = now[i];
@@ -68,11 +72,11 @@ public class ThreadLocalUtil {
                 String cn = preClass.getName();
                 String mn = methodInfo.getMethod().getName();
                 if (stackTraceElement.getMethodName().equals(mn) && stackTraceElement.getClassName().equals(cn))
-                    return false;
+                    return 1;
             } else
                 throw new RuntimeException("Can not use log in LogUtil inner class");
         }
-        return true;
+        return 0;
     }
 
     /**

@@ -145,7 +145,7 @@ public class LogProcessor {
                 method = methodOptional.get();
             if (threadSemaphoreOptional.isPresent()) {
                 //不存在的
-                if (ThreadLocalUtil.isNewChain(firstStackToken,recordNumber,method,Thread.currentThread().getStackTrace(), threadSemaphoreOptional))
+                if (ThreadLocalUtil.isNewChain(firstStackToken, recordNumber, method, Thread.currentThread().getStackTrace(), threadSemaphoreOptional))
                     isNewChain = true;
             } else isNewChain = true;
 
@@ -155,13 +155,13 @@ public class LogProcessor {
                 threadSemaphore.setRootMethodName(methodName);
                 threadSemaphore.setRootClassName(className);
                 threadSemaphore.setRootLineNumber(recordNumber);
-                MethodInfo methodInfo = new MethodInfo(method, Thread.currentThread().getStackTrace(),recordNumber);
+                MethodInfo methodInfo = new MethodInfo(method, Thread.currentThread().getStackTrace(), recordNumber);
                 threadSemaphore.getThreadSemaphores().add(methodInfo);
                 LogThreadLocal.setThreadSemaphore(threadSemaphore);
             } else {
-                threadSemaphoreOptional.get().getThreadSemaphores().add(new MethodInfo(method, Thread.currentThread().getStackTrace(),recordNumber));
+                threadSemaphoreOptional.get().getThreadSemaphores().add(new MethodInfo(method, Thread.currentThread().getStackTrace(), recordNumber));
             }
-            System.out.println(logInfo.getMsg() + "\t" + LogThreadLocal.getThreadSemaphore().get().getFirstStackToken());
+            System.out.println(logInfo.getMsg() + "\t" + LogThreadLocal.getThreadSemaphore().get().getFirstStackToken() + " transaction id " + LogThreadLocal.getThreadSemaphore().get().getId());
             GenericDeclaration executable;
             if (Objects.nonNull(method))
                 executable = method;

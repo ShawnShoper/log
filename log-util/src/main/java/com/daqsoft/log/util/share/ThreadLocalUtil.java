@@ -47,8 +47,7 @@ public class ThreadLocalUtil {
         String className = aClass.getName();
         String methodName = method.getName();
         if (threadSemaphoreOptional.isPresent()) {
-            if (Objects.isNull(threadSemaphoreOptional.get().getFirstStackToken()) || firstStackToken.equals(threadSemaphoreOptional.get().getFirstStackToken()))
-                return false;
+            if(firstStackToken.equals(threadSemaphoreOptional.get().getFirstStackToken()))return true;
             int index = -1;
             for (int i = 0; i < now.length; i++) {
                 StackTraceElement stackTraceElement = now[i];

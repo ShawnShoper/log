@@ -213,7 +213,6 @@ public class KafkaAppender extends Appender {
             for (; !Thread.currentThread().isInterrupted(); ) {
                 try {
                     boolean before = available.get();
-
                     //检查连接是否通畅
                     ProducerRecord<String, String> producerRecord = new ProducerRecord<>(String.valueOf(config.get("checker_topic")), 0, "", "ping");
                     checkerProducer.send(producerRecord, (metadata, exception) -> {

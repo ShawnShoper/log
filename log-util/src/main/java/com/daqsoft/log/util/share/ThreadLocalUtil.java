@@ -47,7 +47,8 @@ public class ThreadLocalUtil {
         String className = aClass.getName();
         String methodName = method.getName();
         if (threadSemaphoreOptional.isPresent()) {
-            if(firstStackToken.equals(threadSemaphoreOptional.get().getFirstStackToken()))return true;
+            if (firstStackToken.equals(threadSemaphoreOptional.get().getFirstStackToken())) return true;
+            if (Thread.currentThread().getId() != threadSemaphoreOptional.get().getTid()) return false;
             int index = -1;
             for (int i = 0; i < now.length; i++) {
                 StackTraceElement stackTraceElement = now[i];
@@ -74,7 +75,16 @@ public class ThreadLocalUtil {
         return true;
     }
 
-    public static Class<?> getClass(Method method){
+    /**
+     * 用于自增spanId
+     *
+     * @return
+     */
+    public static int incrementSpanIndex() {
+        return LogThreadLocal.getThreadSemaphore().get().getSpanIndex().incrementAndGet();
+    }
+
+    public static Class<?> getClass(Method method) {
         try {
             Field root = method.getClass().getDeclaredField("clazz");
             root.setAccessible(true);

@@ -2,6 +2,7 @@ package com.daqsoft.log.util.share;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Thread semaphore
@@ -9,8 +10,9 @@ import java.util.List;
  */
 public class ThreadSemaphore {
     private Long id;
+    private AtomicInteger spanIndex = new AtomicInteger(0);
     //curr thread id
-    private int tid;
+    private long tid;
     private String firstStackToken;
     //the log root class name
     private String rootClassName;
@@ -19,6 +21,10 @@ public class ThreadSemaphore {
     //the log root line number;
     private int rootLineNumber;
     private List<MethodInfo> threadSemaphores = new ArrayList<>();
+
+    public AtomicInteger getSpanIndex() {
+        return spanIndex;
+    }
 
     public ThreadSemaphore() {
         this.id = ThreadLocalUtil.generateId();
@@ -32,11 +38,11 @@ public class ThreadSemaphore {
         this.id = id;
     }
 
-    public int getTid() {
+    public long getTid() {
         return tid;
     }
 
-    public void setTid(int tid) {
+    public void setTid(long tid) {
         this.tid = tid;
     }
 

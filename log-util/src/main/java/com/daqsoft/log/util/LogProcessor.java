@@ -155,10 +155,12 @@ public class LogProcessor {
                 threadSemaphore.setRootMethodName(methodName);
                 threadSemaphore.setRootClassName(className);
                 threadSemaphore.setRootLineNumber(recordNumber);
+                threadSemaphore.setTid(Thread.currentThread().getId());
                 MethodInfo methodInfo = new MethodInfo(method, Thread.currentThread().getStackTrace(), recordNumber);
                 threadSemaphore.getThreadSemaphores().add(methodInfo);
                 LogThreadLocal.setThreadSemaphore(threadSemaphore);
             } else {
+                ThreadLocalUtil.incrementSpanIndex();
                 threadSemaphoreOptional.get().getThreadSemaphores().add(new MethodInfo(method, Thread.currentThread().getStackTrace(), recordNumber));
             }
             System.out.println(logInfo.getMsg() + "\t" + LogThreadLocal.getThreadSemaphore().get().getFirstStackToken() + " transaction id " + LogThreadLocal.getThreadSemaphore().get().getId());

@@ -12,7 +12,6 @@ public class MethodInfo {
         this.stackTraceElements = stackTraceElements;
         this.lineNumber = lineNumber;
     }
-
     public Method getMethod() {
         return method;
     }

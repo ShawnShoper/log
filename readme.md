@@ -1,7 +1,7 @@
 #   日志记录工具
-V<b>1.0.0</b>
+V<b>1.1.0</b>
 
-新功能:预新增MCC(method call chain)功能
+新功能:预新增MCCBOL(method call chain based on log )功能
 
 //TODO 如何标志一个调用链的起点,通过方法的代码行确定(弊端如果存在动态OSGI技术可能出现bug,这种可以忽略)
 

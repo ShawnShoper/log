@@ -7,9 +7,8 @@
     <parent>
         <artifactId>log</artifactId>
         <groupId>com.daqsoft.log</groupId>
-        <version>1.0.2</version>
+        <version>1.1.0</version>
     </parent>
-    <version>0.0.4</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -33,7 +32,7 @@
         <dependency>
             <groupId>com.daqsoft.log</groupId>
             <artifactId>log-config-kafka-api</artifactId>
-            <version>0.0.1</version>
+            <version>1.1.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.daqsoft.commons</groupId>
@@ -65,12 +64,11 @@
         <dependency>
             <groupId>com.daqsoft.log</groupId>
             <artifactId>log-api</artifactId>
-            <version>1.0.2</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.daqsoft.commons</groupId>
             <artifactId>commons-response-entity</artifactId>
-            <version>1.0.2</version>
         </dependency>
     </dependencies>
 </project>

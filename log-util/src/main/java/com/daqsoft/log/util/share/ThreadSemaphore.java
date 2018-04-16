@@ -2,7 +2,9 @@ package com.daqsoft.log.util.share;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Thread semaphore
@@ -10,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ThreadSemaphore {
     private Long id;
-    private AtomicInteger spanIndex = new AtomicInteger(0);
+    private AtomicLong spanIndex = new AtomicLong(0);
     //curr thread id
     private long tid;
     private String firstStackToken;
@@ -22,7 +24,7 @@ public class ThreadSemaphore {
     private int rootLineNumber;
     private List<MethodInfo> threadSemaphores = new ArrayList<>();
 
-    public AtomicInteger getSpanIndex() {
+    public AtomicLong getSpanIndex() {
         return spanIndex;
     }
 
@@ -81,4 +83,5 @@ public class ThreadSemaphore {
     public void setRootLineNumber(int rootLineNumber) {
         this.rootLineNumber = rootLineNumber;
     }
+
 }

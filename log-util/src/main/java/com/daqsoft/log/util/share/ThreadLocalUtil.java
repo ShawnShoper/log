@@ -43,16 +43,16 @@ public class ThreadLocalUtil {
      * 1 not a new chain
      * 2 is sub thread in the same chain
      */
-    public static int isNewChain(String firstStackToken, int lineNumber, Method method, StackTraceElement[] now, final Optional<ThreadSemaphore> threadSemaphoreOptional) {
+    public static ChainResult analyzeChain(String firstStackToken, int lineNumber, Method method, StackTraceElement[] now, final Optional<ThreadSemaphore> threadSemaphoreOptional) {
         if (method == null)
-            return 0;
+            return ChainResult.NOT_SAME;
         //依然得需要分析stack
         Class<?> aClass = getClass(method);
         String className = aClass.getName();
         String methodName = method.getName();
         if (threadSemaphoreOptional.isPresent()) {
-            if (firstStackToken.equals(threadSemaphoreOptional.get().getFirstStackToken())) return 0;
-            if (Thread.currentThread().getId() != threadSemaphoreOptional.get().getTid()) return 2;
+            if (firstStackToken.equals(threadSemaphoreOptional.get().getFirstStackToken())) return ChainResult.SAME;
+            if (Thread.currentThread().getId() != threadSemaphoreOptional.get().getTid()) return ChainResult.SAME_SUBTHREAD;
             int index = -1;
             for (int i = 0; i < now.length; i++) {
                 StackTraceElement stackTraceElement = now[i];
@@ -72,11 +72,11 @@ public class ThreadLocalUtil {
                 String cn = preClass.getName();
                 String mn = methodInfo.getMethod().getName();
                 if (stackTraceElement.getMethodName().equals(mn) && stackTraceElement.getClassName().equals(cn))
-                    return 1;
+                    return ChainResult.SAME;
             } else
                 throw new RuntimeException("Can not use log in LogUtil inner class");
         }
-        return 0;
+        return ChainResult.NOT_SAME;
     }
 
     /**
@@ -84,7 +84,7 @@ public class ThreadLocalUtil {
      *
      * @return
      */
-    public static int incrementSpanIndex() {
+    public static long incrementSpanIndex() {
         return LogThreadLocal.getThreadSemaphore().get().getSpanIndex().incrementAndGet();
     }
 

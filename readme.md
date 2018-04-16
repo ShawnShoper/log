@@ -60,13 +60,16 @@ fileProperties:         #如果设置了Targets-File一定要配置该项
   rolling:  Hour        #日志切割按照间隔时间
   fileSize: 1MB         #日志切割按照安件大小
 #日志输出模板 
-#   %t  时间
-#   %l  日志等级
-#   %p  进程号
-#   %mn 方法名
-#   %ln 行号
-#   %cn 类名
-#   %c  日志内容
+#   %t      时间
+#   %l      日志等级
+#   %p      进程号
+#   %mn     方法名
+#   %ln     行号
+#   %cn     类名
+#   %c      日志内容
+#   %tid    线程Id
+#   %traid  线程事务Id
+#   %spanId spanIndexId
 partten:  "%-23{yyyy-MM-dd HH:mm:ss.sss}t %5l %-5p --- [%15mn:%ln] %-41cn: %c"    
 
 ```

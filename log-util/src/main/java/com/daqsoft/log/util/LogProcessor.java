@@ -9,10 +9,7 @@ import com.daqsoft.log.util.annotation.LogModel;
 import com.daqsoft.log.util.appender.Appender;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.queue.LogQueue;
-import com.daqsoft.log.util.share.LogThreadLocal;
-import com.daqsoft.log.util.share.MethodInfo;
-import com.daqsoft.log.util.share.ThreadLocalUtil;
-import com.daqsoft.log.util.share.ThreadSemaphore;
+import com.daqsoft.log.util.share.*;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -141,11 +138,12 @@ public class LogProcessor {
             String firstStackToken = ThreadLocalUtil.firstStackToken(className + methodName + recordNumber);
             boolean isNewChain = false;
             Method method = null;
+            ChainResult chainResult = ChainResult.EMPTY;
             if (methodOptional.isPresent())
                 method = methodOptional.get();
             if (threadSemaphoreOptional.isPresent()) {
-                //不存在的
-                if (ThreadLocalUtil.isNewChain(firstStackToken, recordNumber, method, Thread.currentThread().getStackTrace(), threadSemaphoreOptional))
+                chainResult = ThreadLocalUtil.analyzeChain(firstStackToken, recordNumber, method, Thread.currentThread().getStackTrace(), threadSemaphoreOptional);
+                if (chainResult == ChainResult.SAME || chainResult == chainResult.SAME_SUBTHREAD)
                     isNewChain = true;
             } else isNewChain = true;
 
@@ -161,7 +159,12 @@ public class LogProcessor {
                 LogThreadLocal.setThreadSemaphore(threadSemaphore);
             } else {
                 ThreadLocalUtil.incrementSpanIndex();
-                threadSemaphoreOptional.get().getThreadSemaphores().add(new MethodInfo(method, Thread.currentThread().getStackTrace(), recordNumber));
+                ThreadSemaphore threadSemaphore = threadSemaphoreOptional.get();
+                MethodInfo methodInfo = new MethodInfo(method, Thread.currentThread().getStackTrace(), recordNumber);
+                if (chainResult == ChainResult.SAME_SUBTHREAD)
+                    //开始产生分支.
+                    methodInfo.setSpanIndex(threadSemaphore.getSpanIndex().incrementAndGet());
+                threadSemaphore.getThreadSemaphores().add(methodInfo);
             }
             System.out.println(logInfo.getMsg() + "\t" + LogThreadLocal.getThreadSemaphore().get().getFirstStackToken() + " transaction id " + LogThreadLocal.getThreadSemaphore().get().getId());
             GenericDeclaration executable;
@@ -180,19 +183,6 @@ public class LogProcessor {
                 if (Objects.nonNull(c))
                     channel = c.value();
             }
-//            } else {
-//                LogModel classLogModel = executable.getAnnotation(LogModel.class);
-//                if (Objects.nonNull(classLogModel))
-//                    model = classLogModel.value();
-//                ContentType ct = clazz.getAnnotation(ContentType.class);
-//                if (Objects.nonNull(ct))
-//                    contentType = ct.value().name();
-//                if (Objects.isNull(channel)) {
-//                    Channel c = clazz.getAnnotation(Channel.class);
-//                    if (Objects.nonNull(c))
-//                        channel = c.value();
-//                }
-//            }
             LogProperties logConfig = LogFactory.getLogProperties();
             Business business = new Business();
             business.setModel(model);
@@ -207,7 +197,7 @@ public class LogProcessor {
             }
             business.setContent(logMsg);
             business.setLevel(logLevel);
-            log = new Log(channel, logConfig.getApplication(), System.currentTimeMillis(), contentType, logConfig.getHost(), logConfig.getPort(), pid, className, methodName, recordNumber, business);
+            log = new Log(channel, logConfig.getApplication(), System.currentTimeMillis(), contentType, logConfig.getHost(), logConfig.getPort(), pid, className, methodName, recordNumber, business,Thread.currentThread().getId(),threadSemaphoreOptional.get().getSpanIndex().get(),threadSemaphoreOptional.get().getId());
         } catch (Throwable e) {
             e.printStackTrace();
         }

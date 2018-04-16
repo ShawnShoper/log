@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 /**
  * Created by ShawnShoper on 2017/4/17.
- * 日志工厂
+ * log factory..
  */
 public class LogFactory {
     //日志配置

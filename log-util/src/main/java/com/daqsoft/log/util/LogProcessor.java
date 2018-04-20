@@ -166,7 +166,6 @@ public class LogProcessor {
                     methodInfo.setSpanIndex(threadSemaphore.getSpanIndex().incrementAndGet());
                 threadSemaphore.getThreadSemaphores().add(methodInfo);
             }
-            System.out.println(logInfo.getMsg() + "\t" + LogThreadLocal.getThreadSemaphore().get().getFirstStackToken() + " transaction id " + LogThreadLocal.getThreadSemaphore().get().getId());
             GenericDeclaration executable;
             if (Objects.nonNull(method))
                 executable = method;
@@ -197,7 +196,8 @@ public class LogProcessor {
             }
             business.setContent(logMsg);
             business.setLevel(logLevel);
-            log = new Log(channel, logConfig.getApplication(), System.currentTimeMillis(), contentType, logConfig.getHost(), logConfig.getPort(), pid, className, methodName, recordNumber, business,Thread.currentThread().getId(),threadSemaphoreOptional.get().getSpanIndex().get(),threadSemaphoreOptional.get().getId());
+            ThreadSemaphore threadSemaphore = LogThreadLocal.getThreadSemaphore().get();
+            log = new Log(channel, logConfig.getApplication(), System.currentTimeMillis(), contentType, logConfig.getHost(), logConfig.getPort(), pid, className, methodName, recordNumber, business,Thread.currentThread().getId(),threadSemaphore.getSpanIndex().get(),threadSemaphore.getId());
         } catch (Throwable e) {
             e.printStackTrace();
         }

@@ -52,7 +52,8 @@ public class ThreadLocalUtil {
         String methodName = method.getName();
         if (threadSemaphoreOptional.isPresent()) {
             if (firstStackToken.equals(threadSemaphoreOptional.get().getFirstStackToken())) return ChainResult.SAME;
-            if (Thread.currentThread().getId() != threadSemaphoreOptional.get().getTid()) return ChainResult.SAME_SUBTHREAD;
+            if (Thread.currentThread().getId() != threadSemaphoreOptional.get().getTid())
+                return ChainResult.SAME_SUBTHREAD;
             int index = -1;
             for (int i = 0; i < now.length; i++) {
                 StackTraceElement stackTraceElement = now[i];
@@ -65,7 +66,9 @@ public class ThreadLocalUtil {
                 }
             }
             if (index != -1 && now.length > index) {
-                StackTraceElement stackTraceElement = now[index + 1];
+                if (index + 1 < now.length)
+                    ++index;
+                StackTraceElement stackTraceElement = now[index];
                 ThreadSemaphore threadSemaphore = threadSemaphoreOptional.get();
                 MethodInfo methodInfo = threadSemaphore.getThreadSemaphores().get(threadSemaphore.getThreadSemaphores().size() - 1);
                 Class<?> preClass = getClass(methodInfo.getMethod());

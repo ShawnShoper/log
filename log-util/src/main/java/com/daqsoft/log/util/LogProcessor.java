@@ -143,8 +143,8 @@ public class LogProcessor {
                 method = methodOptional.get();
             if (threadSemaphoreOptional.isPresent()) {
                 chainResult = ThreadLocalUtil.analyzeChain(firstStackToken, recordNumber, method, Thread.currentThread().getStackTrace(), threadSemaphoreOptional);
-                if (chainResult == ChainResult.SAME || chainResult == chainResult.SAME_SUBTHREAD)
-                    isNewChain = true;
+                if (chainResult == ChainResult.NOT_SAME)
+                    isNewChain = false;
             } else isNewChain = true;
 
             if (isNewChain) {
@@ -166,6 +166,7 @@ public class LogProcessor {
                     methodInfo.setSpanIndex(threadSemaphore.getSpanIndex().incrementAndGet());
                 threadSemaphore.getThreadSemaphores().add(methodInfo);
             }
+            System.out.println(logInfo.getMsg() + "\t" + LogThreadLocal.getThreadSemaphore().get().getFirstStackToken() + " transaction id " + LogThreadLocal.getThreadSemaphore().get().getId());
             GenericDeclaration executable;
             if (Objects.nonNull(method))
                 executable = method;

@@ -1,5 +1,7 @@
 package com.daqsoft.log.util;
 
+import com.daqsoft.log.util.fuck.Assert;
+
 import java.io.*;
 
 public class InnerPrintStream extends PrintStream {

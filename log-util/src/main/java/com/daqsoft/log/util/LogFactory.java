@@ -64,7 +64,7 @@ public class LogFactory {
                 }
                 String name = matcher.group(4);
                 if (Objects.isNull(name))
-                    throw new RuntimeException(String.format("Log express tag %s not support", name));
+                    throw new IllegalArgumentException(String.format("Log express tag %s not support", name));
                 Tag tag;
                 try {
                     tag = Tag.valueOf(name.toUpperCase());
@@ -73,6 +73,7 @@ public class LogFactory {
                 }
                 return new LogPattern(tag.getName(), offset.isEmpty() ? 0 : Integer.valueOf(offset), pattern, (Objects.isNull(neg) ? ' ' : '-'));
             } else {
+                // TODO 好像不能返回null吧.除非你想让logPatterns上有null吗
                 return null;
             }
         }).forEach(logPatterns::add);
@@ -85,7 +86,7 @@ public class LogFactory {
             else if(target == Target.Kafka)
                 appenders.add(new KafkaAppender(logProperties));
             else
-                throw new RuntimeException("Target " + target + " not support yet");
+                throw new IllegalArgumentException("Target " + target + " not support yet");
 
         }
         logProcessor = new LogProcessor(appenders);

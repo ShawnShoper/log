@@ -78,6 +78,10 @@ public class KafkaAppender extends Appender {
 
     ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * TODO 为什么要用同步，没看懂当时为什么要这样做，以后改掉！
+     * @param log
+     */
     private synchronized void send(Log log) {
         if(over.compareAndSet(true, false)) {
             String json = null;

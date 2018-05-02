@@ -41,10 +41,9 @@ public class FileAppender extends Appender {
     List<LogPattern> logPatterns;
 
     public FileAppender(final LogProperties logProperties, final List<LogPattern> logPatterns) {
+        super(logProperties);
         Assert.notNull(logProperties, () -> "LogProperties cann't be null");
         Assert.notNull(logPatterns, () -> "logPatterns cann't be null");
-
-        super(logProperties);
         this.fileProperties = logProperties.getFileProperties();
         this.logPatterns = logPatterns;
     }

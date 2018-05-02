@@ -9,6 +9,7 @@ import com.daqsoft.log.util.config.FileProperties;
 import com.daqsoft.log.util.config.LogPattern;
 import com.daqsoft.log.util.config.LogProperties;
 import com.daqsoft.log.util.constans.FileCap;
+import com.daqsoft.log.util.fuck.Assert;
 import scala.collection.immutable.Stream;
 
 import java.io.*;
@@ -40,6 +41,9 @@ public class FileAppender extends Appender {
     List<LogPattern> logPatterns;
 
     public FileAppender(final LogProperties logProperties, final List<LogPattern> logPatterns) {
+        Assert.notNull(logProperties, () -> "LogProperties cann't be null");
+        Assert.notNull(logPatterns, () -> "logPatterns cann't be null");
+
         super(logProperties);
         this.fileProperties = logProperties.getFileProperties();
         this.logPatterns = logPatterns;

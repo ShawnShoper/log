@@ -79,50 +79,53 @@ public class KafkaAppender extends Appender {
     ObjectMapper mapper = new ObjectMapper();
 
     private synchronized void send(Log log) {
-        over.compareAndSet(true, false);
-        String json = null;
-        try {
-            json = mapper.writeValueAsString(log);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        if (Objects.isNull(json)) {
-            over.compareAndSet(false, true);
-            failedQueue.offer(log);
-            return;
-        }
-        try {
-            CountDownLatch countDownLatch = new CountDownLatch(1);
+        if(over.compareAndSet(true, false)) {
+            String json = null;
+            try {
+                json = mapper.writeValueAsString(log);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            if (Objects.isNull(json)) {
+                over.compareAndSet(false, true);
+                failedQueue.offer(log);
+                return;
+            }
+            try {
+                CountDownLatch countDownLatch = new CountDownLatch(1);
 //                boolean before = available.get();
 //                producer.
-            //Kafka key
-            if (available.get()) {
-                ProducerRecord<String, String> producerRecord = new ProducerRecord<>(Objects.isNull(log.getChannel()) ? this.topic : log.getChannel(), 0, kid, json);
-                producer.send(producerRecord, (metadata, exception) -> {
+                //Kafka key
+                if (available.get()) {
+                    ProducerRecord<String, String> producerRecord = new ProducerRecord<>(Objects.isNull(log.getChannel()) ? this.topic : log.getChannel(), 0, kid, json);
+                    producer.send(producerRecord, (metadata, exception) -> {
 //                        if (!before && available.get()) {
-                    //如果之前是链接失败的,现在成功链接后,进行消息回写
+                        //如果之前是链接失败的,现在成功链接后,进行消息回写
 //                            revertLogToMQ();
 //                        }
-                    if (Objects.nonNull(exception)) {
-                        failedQueue.offer(log);
-                        available.compareAndSet(true, false);
+                        if (Objects.nonNull(exception)) {
+                            failedQueue.offer(log);
+                            available.compareAndSet(true, false);
 //                            disConnect();
-                    }
-                    countDownLatch.countDown();
-                });
-                //重启kafka后,这里无法进行flush导致系统停顿卡死.
-                producer.flush();
-                countDownLatch.await();
+                        }
+                        countDownLatch.countDown();
+                    });
+                    //重启kafka后,这里无法进行flush导致系统停顿卡死.
+                    producer.flush();
+                    countDownLatch.await();
 //                available.compareAndSet(false, true);
-            } else {
+                } else {
+                    failedQueue.offer(log);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                available.compareAndSet(true, false);
                 failedQueue.offer(log);
+            } finally {
+                over.compareAndSet(false, true);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            available.compareAndSet(true, false);
-            failedQueue.offer(log);
-        } finally {
-            over.compareAndSet(false, true);
+        } else {
+            // TODO do something...
         }
 
     }

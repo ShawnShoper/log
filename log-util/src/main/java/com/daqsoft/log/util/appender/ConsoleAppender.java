@@ -38,8 +38,8 @@ public class ConsoleAppender extends Appender {
      * @return
      */
     public Map<String, String> prepare(Log log) {
-        Map<String, String> tag_value = new HashMap<>();
-        if (!logPatterns.isEmpty())
+        if (!logPatterns.isEmpty()) {
+            Map<String, String> tag_value = new HashMap<>(logPatterns.size());
             logPatterns.stream().forEach(e -> {
                 String name = e.getName();
                 String tmp = Constans.EMPTY;
@@ -97,8 +97,10 @@ public class ConsoleAppender extends Appender {
 //                    tmp = String.format(PERCENT + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset() + 11) + "s", tmp);
                 }
                 tag_value.put(Constans.PERCENT + (' ' == e.getNeg() ? "" : e.getNeg()) + (e.getOffset() == 0 ? "" : e.getOffset()) + (Objects.nonNull(e.getPattern()) ? "{" + e.getPattern() + "}" : "") + e.getName(), tmp);
+                return tag_value;
             });
-        return tag_value;
+        }
+        return Collections.EMPTY_MAP;
     }
 
     private String format(String origin, int offset, char neg) {
@@ -108,25 +110,26 @@ public class ConsoleAppender extends Appender {
     private AtomicBoolean over = new AtomicBoolean(true);
 
     public void write(Log log) throws IOException {
-        over.compareAndSet(true, false);
-        try {
-            Map<String, String> prepare = prepare(log);
-            String partten = logProperties.getPartten();
-            String out = partten;
-            for (String k : prepare.keySet()) {
-                String s = prepare.get(k);
-                out = out.replace(k, s);
+        if(over.compareAndSet(true, false)) {
+            try {
+                Map<String, String> prepare = prepare(log);
+                String partten = logProperties.getPartten();
+                String out = partten;
+                for (String k : prepare.keySet()) {
+                    String s = prepare.get(k);
+                    out = out.replace(k, s);
+                }
+                print.write(out.getBytes());
+                print.write(Constans.NEWLINE.getBytes());
+                print.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                over.compareAndSet(false, true);
             }
-            print.write(out.getBytes());
-            print.write(Constans.NEWLINE.getBytes());
-            print.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            over.compareAndSet(false, true);
+        } else {
+            // TODO do something...
         }
-
-
     }
 
     @Override
@@ -136,8 +139,12 @@ public class ConsoleAppender extends Appender {
 
     @Override
     public void destroy() {
+        /*
         if (Objects.isNull(print))
             print.close();
-
+            */
+        if(Objects.nonNull(print)) {
+            print.close();
+        }
     }
 }
